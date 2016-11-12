@@ -1,3 +1,5 @@
+Require python3 and python3-pygame
+
 To play this game, you should have a font file which includes Chinese letter.
 If not, some letters might not be shown.
 Then edit "running.py". Find these two lines
