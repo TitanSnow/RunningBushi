@@ -71,13 +71,27 @@ rangerImg=pygame.image.load(rangerImgFileName).convert_alpha()
 antmanImg=pygame.image.load(antmanImgFileName).convert_alpha()
 shootImg=pygame.image.load(shootImgFileName).convert_alpha()
 
+#functions
+def getChineseFont(name,size):
+    if name==None:
+        # find by myself
+        for fn in pygame.font.get_fonts():
+            f=pygame.font.SysFont(fn,size)
+            a=f.render("一",False,black,white)
+            b=f.render("二",False,black,white)
+            if a.get_buffer().raw!=b.get_buffer().raw:
+                # found it!
+                name=pygame.font.match_font(fn)
+                break
+    return pygame.font.Font(name,size)
+
 while True:
     #get clock
     clock=pygame.time.Clock()
     clock2=pygame.time.Clock()
 
     #text
-    my_font=pygame.font.Font(fontName,tipHeight)
+    my_font=getChineseFont(fontName,tipHeight)
     tip=my_font.render("ESC: 退出  空格: 开始&跳  回车: 放大招  S：射击",True,white)
     coldDownTip=my_font.render("大招冷却",True,black)
     rectTip=tip.get_rect()
@@ -329,7 +343,7 @@ while True:
         #is game end?
         rewhile=True
         if gameEnd and not debugMode:
-            textImg=pygame.font.Font(fontName,gameOverHeight).render("GAME OVER",True,red)
+            textImg=getChineseFont(fontName,gameOverHeight).render("GAME OVER",True,red)
             tipImg=my_font.render(gameEndTip,True,red)
             tip2Img=my_font.render("按空格？Begin again.",True,white)
             screen.blit(textImg,(scrWidth//2-textImg.get_rect().right//2,scrHeight//2-textImg.get_rect().bottom//2))
