@@ -75,13 +75,16 @@ shootImg=pygame.image.load(shootImgFileName).convert_alpha()
 def getChineseFont(name,size):
     if name==None:
         # find by myself
-        for fn in pygame.font.get_fonts():
-            f=pygame.font.SysFont(fn,size)
+        fs=pygame.font.get_fonts()
+        for fn in fs:
+            fp=pygame.font.match_font(fn)
+            f=pygame.font.Font(fp,size)
             a=f.render("一",False,black,white)
             b=f.render("二",False,black,white)
             if a.get_buffer().raw!=b.get_buffer().raw:
                 # found it!
-                name=pygame.font.match_font(fn)
+                name=fp
+                print("Select '"+fn+"' at '"+name+"' in "+str(fs))
                 break
     return pygame.font.Font(name,size)
 
