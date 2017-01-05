@@ -20,3 +20,4 @@ clean:
 	-rm -r $(pack_dir)
 make_base64: make_base64.py antman.gif ranger.gif shoot.gif
 	./make_base64.py
+.PHONY: all run make_jar make_dir put_py put_pyj2d put_jython put_Main compile_Main clean make_base64
