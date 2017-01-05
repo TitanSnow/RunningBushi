@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-
+# coding:UTF-8
 # This is free and unencumbered software released into the public domain.
 #
 # Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -25,8 +24,8 @@
 #
 # For more information, please refer to <http://unlicense.org/>
 
-import pygame
-from pygame.locals import *
+import pyj2d as pygame
+from pyj2d.locals import *
 import sys
 import random
 
@@ -72,6 +71,15 @@ antmanImg=pygame.image.load(antmanImgFileName).convert_alpha()
 shootImg=pygame.image.load(shootImgFileName).convert_alpha()
 
 #functions
+def is_equral_surface(a,b):
+    if a.get_size()!=b.get_size():
+        return False
+    size=a.get_size()
+    for x in range(0,size[0]):
+        for y in range(0,size[1]):
+            if a.get_at((x,y))!=b.get_at((x,y)):
+                return False
+    return True
 def getChineseFont(name,size):
     if name==None:
         # find by myself
@@ -79,12 +87,12 @@ def getChineseFont(name,size):
         for fn in fs:
             fp=pygame.font.match_font(fn)
             f=pygame.font.Font(fp,size)
-            a=f.render("一",False,black,white)
-            b=f.render("二",False,black,white)
-            if a.get_buffer().raw!=b.get_buffer().raw:
+            a=f.render(u"一",False,black,white)
+            b=f.render(u"二",False,black,white)
+            if not is_equral_surface(a,b):
                 # found it!
                 name=fp
-                print("Select '"+fn+"' at '"+name+"' in "+str(fs))
+                print(u"Select '"+fn+u"' at '"+name+u"' in "+str(fs))
                 break
     return pygame.font.Font(name,size)
 
@@ -95,10 +103,10 @@ while True:
 
     #text
     my_font=getChineseFont(fontName,tipHeight)
-    tip=my_font.render("ESC: 退出  空格: 开始&跳  回车: 放大招  S：射击",True,white)
-    coldDownTip=my_font.render("大招冷却",True,black)
+    tip=my_font.render(u"ESC: 退出  空格: 开始&跳  回车: 放大招  S：射击",True,white)
+    coldDownTip=my_font.render(u"大招冷却",True,black)
     rectTip=tip.get_rect()
-    shootTip=my_font.render("弹药量：",True,white)
+    shootTip=my_font.render(u"弹药量：",True,white)
     rectShootTip=shootTip.get_rect()
 
     #ranger vars
@@ -133,17 +141,17 @@ while True:
     debugMode=False
 
     #game end tip
-    gameEndTip=""
-    hitWallTips=("谁让你撞墙的！","Ouch!","呯！","果然是一个大包！","长点眼！","此路不通","痛死我了！")
-    antEatTips=("您已被蚂蚁吃了","好饱！——蚂蚁","不留尸骨","食人蚁正在庆祝","谁咬了我一口！","站在食物链最低端——贝尔")
+    gameEndTip=u""
+    hitWallTips=(u"谁让你撞墙的！",u"Ouch!",u"呯！",u"果然是一个大包！",u"长点眼！",u"此路不通",u"痛死我了！")
+    antEatTips=(u"您已被蚂蚁吃了",u"好饱！——蚂蚁",u"不留尸骨",u"食人蚁正在庆祝",u"谁咬了我一口！",u"站在食物链最低端——贝尔")
 
     #game start tip
-    gameStartTipImg=my_font.render("按空格开始生存之旅",True,white)
+    gameStartTipImg=my_font.render(u"按空格开始生存之旅",True,white)
 
     #main loop
     while True:
         #sleep
-        clock.tick(fps)
+        pygame.time.delay(33)
         timeout=clock2.tick()
         
         #change coldDown
@@ -221,8 +229,8 @@ while True:
                     pShoot.remove(psh)
                     breakaway=True
                     cShoot+=2
-                    break;
-            if breakaway:continue;
+                    break
+            if breakaway:continue
             for pway in pWays:
                 x1=psh[0]
                 x2=pway[0]
@@ -241,7 +249,7 @@ while True:
                     pShoot.remove(psh)
                     breakaway=True
                     break
-            if breakaway:continue;
+            if breakaway:continue
             psh[0]+=shootRate            
         
         #move antman
@@ -291,24 +299,24 @@ while True:
                 #debug
                 elif e.key==K_d:
                     isReadyToDebug=True
-                    lastChar='D'
+                    lastChar=u'D'
                 elif e.key==K_e:
-                    if isReadyToDebug and lastChar=='D':
-                        lastChar='E'
+                    if isReadyToDebug and lastChar==u'D':
+                        lastChar=u'E'
                     else:
                         isReadyToDebug=False
                 elif e.key==K_b:
-                    if isReadyToDebug and lastChar=='E':
-                        lastChar='B'
+                    if isReadyToDebug and lastChar==u'E':
+                        lastChar=u'B'
                     else:
                         isReadyToDebug=False
                 elif e.key==K_u:
-                    if isReadyToDebug and lastChar=='B':
-                        lastChar='U'
+                    if isReadyToDebug and lastChar==u'B':
+                        lastChar=u'U'
                     else:
                         isReadyToDebug=False
                 elif e.key==K_g:
-                    if isReadyToDebug and lastChar=='U':
+                    if isReadyToDebug and lastChar==u'U':
                         debugMode=True
                     else:
                         isReadyToDebug=False
@@ -324,8 +332,8 @@ while True:
         #draw
         screen.fill(black)
         screen.blit(tip,(scrWidth-rectTip.right,0))
-        screen.blit(my_font.render("帧率: "+str(int(1000/timeout))+" 分数: "+str(scope),False,white),(0,0))
-        coldDownImg=pygame.Surface((int(scrWidth/coldDownTimeout/30*coldDown),tipHeight))
+        screen.blit(my_font.render(u"帧率: "+str(int(1000/timeout))+u" 分数: "+str(scope),False,white),(0,0))
+        coldDownImg=pygame.Surface((max(int(scrWidth/coldDownTimeout/30*coldDown),1),tipHeight))
         coldDownImg.fill(white)
         screen.blit(coldDownImg,(0,tipHeight))
         screen.blit(coldDownTip,(0,tipHeight))
@@ -346,9 +354,9 @@ while True:
         #is game end?
         rewhile=True
         if gameEnd and not debugMode:
-            textImg=getChineseFont(fontName,gameOverHeight).render("GAME OVER",True,red)
+            textImg=getChineseFont(fontName,gameOverHeight).render(u"GAME OVER",True,red)
             tipImg=my_font.render(gameEndTip,True,red)
-            tip2Img=my_font.render("按空格？Begin again.",True,white)
+            tip2Img=my_font.render(u"按空格？Begin again.",True,white)
             screen.blit(textImg,(scrWidth//2-textImg.get_rect().right//2,scrHeight//2-textImg.get_rect().bottom//2))
             screen.blit(tipImg,(scrWidth//2-tipImg.get_rect().right//2,scrHeight//2+textImg.get_rect().bottom//2))
             screen.blit(tip2Img,(scrWidth//2-tip2Img.get_rect().right//2,scrHeight//2+textImg.get_rect().bottom//2+tipImg.get_rect().bottom))
