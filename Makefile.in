@@ -1,0 +1,22 @@
+all: make_jar make_dir
+	cp $(pack_dir)/output.jar ./running.jar
+run: all
+	$(java) -jar running.jar
+make_jar: put_py put_pyj2d put_jython put_Main make_dir
+	cd $(pack_dir);$(jar) -cfe output.jar Main *;cd -
+make_dir: clean
+	mkdir $(pack_dir)
+put_py: make_dir make_base64 running.py myimgbase64.py entrypoint.py
+	cp running.py myimgbase64.py entrypoint.py $(pack_dir)
+put_pyj2d: pyj2d make_dir
+	cp -r pyj2d $(pack_dir)
+put_jython: make_dir $(JYTHONROOT)/Lib $(JYTHONROOT)/jython.jar
+	cp -r $(JYTHONROOT)/Lib $(pack_dir)
+	unzip $(JYTHONROOT)/jython.jar -d $(pack_dir)
+put_Main: compile_Main
+compile_Main: Main.java make_dir put_py put_pyj2d put_jython
+	cd $(pack_dir);$(javac) ../Main.java -d .;cd -
+clean:
+	-rm -r $(pack_dir)
+make_base64: make_base64.py antman.gif ranger.gif shoot.gif
+	./make_base64.py

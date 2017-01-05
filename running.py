@@ -24,10 +24,13 @@
 #
 # For more information, please refer to <http://unlicense.org/>
 
+from myimgbase64 import *
 import pyj2d as pygame
 from pyj2d.locals import *
 import sys
 import random
+import base64
+import StringIO
 
 #consts
 rangerImgFileName="ranger.gif"
@@ -66,9 +69,17 @@ pygame.init()
 screen=pygame.display.set_mode((scrWidth,scrHeight))
 
 #import images
-rangerImg=pygame.image.load(rangerImgFileName).convert_alpha()
-antmanImg=pygame.image.load(antmanImgFileName).convert_alpha()
-shootImg=pygame.image.load(shootImgFileName).convert_alpha()
+def decodeMyBase64Img(b64):
+	io=StringIO.StringIO()
+	io.write(base64.b64decode(b64))
+	io.seek(0)
+	return pygame.image.load(io).convert_alpha()
+if rangerBase64==None:rangerImg=pygame.image.load(rangerImgFileName).convert_alpha()
+else:rangerImg=decodeMyBase64Img(rangerBase64)
+if antmanBase64==None:antmanImg=pygame.image.load(antmanImgFileName).convert_alpha()
+else:antmanImg=decodeMyBase64Img(antmanBase64)
+if shootBase64==None:shootImg=pygame.image.load(shootImgFileName).convert_alpha()
+else:shootImg=decodeMyBase64Img(shootBase64)
 
 #functions
 def is_equral_surface(a,b):
