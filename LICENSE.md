@@ -1,0 +1,1 @@
+The files including the images in this dir which do not clearly provide or under a copyright notice or license are under [the Unlicense](http://unlicense.org), means that they're put into public domain.
