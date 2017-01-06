@@ -70,10 +70,10 @@ screen=pygame.display.set_mode((scrWidth,scrHeight))
 
 #import images
 def decodeMyBase64Img(b64):
-	io=StringIO.StringIO()
-	io.write(base64.b64decode(b64))
-	io.seek(0)
-	return pygame.image.load(io).convert_alpha()
+    io=StringIO.StringIO()
+    io.write(base64.b64decode(b64))
+    io.seek(0)
+    return pygame.image.load(io).convert_alpha()
 if rangerBase64==None:rangerImg=pygame.image.load(rangerImgFileName).convert_alpha()
 else:rangerImg=decodeMyBase64Img(rangerBase64)
 if antmanBase64==None:antmanImg=pygame.image.load(antmanImgFileName).convert_alpha()
