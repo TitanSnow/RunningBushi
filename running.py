@@ -103,7 +103,7 @@ def getChineseFont(name,size):
             if not is_equral_surface(a,b):
                 # found it!
                 name=fp
-                print(u"Select '"+fn+u"' at '"+name+u"' in "+str(fs))
+                #print(u"Select '"+fn+u"' at '"+name+u"' in "+str(fs))
                 break
     return pygame.font.Font(name,size)
 
