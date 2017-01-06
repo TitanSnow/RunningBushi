@@ -2,6 +2,6 @@
 
 *or*
 
-./configure.py;
-make;
-[java](https://www.java.com) -jar running.jar
+./configure.py	# to config<br/>
+make	# to build<br/>
+[java](http://openjdk.java.net) -jar running.jar	# to run
