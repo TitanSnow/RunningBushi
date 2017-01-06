@@ -1,3 +1,21 @@
+0.28_dev
+-update jpanel with event handling that registers appropriate mouse position.
+-add time set_timer method.
+-update display repaint to sync with program iteration.
+-update sprite to revise member groups.
+-update sprite argument handling.
+-update sprite collide_mask to use mask.overlap.
+-add mouse set_cursor and get_cursor methods.
+-update mouse set_cursor to use custom image.
+-update mouse set_cursor to use cursor data.
+-update transform rotozoom to optimize.
+-update surface area blit to optimize.
+-update display update method to optimize.
+-add util timer for profiling.
+-update draw arc with dimension adjustment.
+-update time clock for accuracy.
+-revise with absolute import statements.
+
 0.27    2015-04-12
 -update font to enhance fonts access.
 -update image load to allow file-like argument.

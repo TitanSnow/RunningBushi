@@ -161,7 +161,7 @@ while True:
     #main loop
     while True:
         #sleep
-        pygame.time.delay(33)
+        clock.tick(fps)
         
         #change coldDown
         if coldDown>0:

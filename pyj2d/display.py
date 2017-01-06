@@ -12,14 +12,17 @@ from java.awt.event import KeyListener
 from java.awt.event import MouseEvent, KeyEvent
 from java.lang import Thread, Runnable, InterruptedException
 from javax.swing import SwingUtilities
+from pyj2d.surface import Surface
+from pyj2d.rect import Rect
+from pyj2d.time import Clock
+from pyj2d.sprite import Sprite, Group, RenderUpdates, OrderedUpdates
+from pyj2d import env
 import pyj2d.event
-import pyj2d.surface
-import pyj2d.env
 
 __docformat__ = 'restructuredtext'
 
 
-class Frame(JFrame, MouseListener, MouseMotionListener, MouseWheelListener, KeyListener):
+class Frame(JFrame):
 
     def __init__(self, title, size):
         JFrame.__init__(self, title)
@@ -31,12 +34,24 @@ class Frame(JFrame, MouseListener, MouseMotionListener, MouseWheelListener, KeyL
         self.jpanel = Panel(size)
         self.getContentPane().add(self.jpanel)
         self.pack()
+
+
+class Panel(JPanel, MouseListener, MouseMotionListener, MouseWheelListener, KeyListener):
+
+    def __init__(self, size):
+        JPanel.__init__(self)
+        self.setPreferredSize(Dimension(size[0],size[1]))
+        self.surface = Surface(size, BufferedImage.TYPE_INT_RGB)
+        self.setBackground(Color.BLACK)
         self.addMouseListener(self)
         self.addMouseMotionListener(self)
         self.addMouseWheelListener(self)
         self.addKeyListener(self)
+        self.setFocusable(True)
+        self.requestFocusInWindow()
         self.event = pyj2d.event
         self.modKey = pyj2d.event.modKey
+        self._repainting = Clock._repaint_sync
 
     def mousePressed(self, event):
         self.event.mousePress[event.button] = True
@@ -80,15 +95,6 @@ class Frame(JFrame, MouseListener, MouseMotionListener, MouseWheelListener, KeyL
     def keyTyped(self, event):
         pass
 
-
-class Panel(JPanel):
-
-    def __init__(self, size):
-        JPanel.__init__(self)
-        self.setPreferredSize(Dimension(size[0],size[1]))
-        self.surface = pyj2d.surface.Surface(size, BufferedImage.TYPE_INT_RGB)
-        self.setBackground(Color.BLACK)
-
     def paintComponent(self, g2d):
         self.super__paintComponent(g2d)
         g2d.drawImage(self.surface, 0, 0, None)
@@ -96,6 +102,7 @@ class Panel(JPanel):
             Toolkit.getDefaultToolkit().sync()
         except:
             pass
+        self._repainting.set(False)
 
 
 class Display(Runnable):
@@ -143,17 +150,18 @@ class Display(Runnable):
         Return a display Surface.
         Argument: size (x,y) of surface.
         """
-        if pyj2d.env.japplet:
-            self.jframe = pyj2d.env.japplet
+        if env.japplet:
+            self.jframe = env.japplet
         else:
             self.jframe = Frame(self.caption, size)
             if self.icon:
                 self.jframe.setIconImage(self.icon)
-        pyj2d.env.jframe = self.jframe
+        env.jframe = self.jframe
         self.jpanel = self.jframe.jpanel
         self.surface = self.jpanel.surface
         self.surface._display = self
-        self._surface_rect = [self.surface.get_rect()]
+        self._surfaceRect = self.surface.get_rect()
+        self._surface_rect = [self._surfaceRect]
         self._rect_list = None
         self.clear()
         self.jframe.setVisible(True)
@@ -168,7 +176,7 @@ class Display(Runnable):
 
     def get_frame(self):
         """
-        Return JFrame or JApplet.
+        Return JFrame.
         """
         return self.jframe
 
@@ -179,11 +187,6 @@ class Display(Runnable):
         return self.jpanel
 
     def _warmup(self):
-        Surface = pyj2d.surface.Surface
-        Sprite = pyj2d.sprite.Sprite
-        Group = pyj2d.sprite.Group
-        RenderUpdates = pyj2d.sprite.RenderUpdates
-        OrderedUpdates = pyj2d.sprite.OrderedUpdates
         surface = [Surface(size) for size in ((5,5), (5,5), (3,3))]
         for i, color in enumerate([(0,0,0), (0,0,0), (100,100,100)]):
             surface[i].fill(color)
@@ -199,9 +202,6 @@ class Display(Runnable):
             for i in range(500):
                 grp.clear(surface[0],surface[1])
                 grp.draw(surface[0])
-        for grp in group:
-            grp.empty()
-            Group._groups.remove(grp)
 
     def quit(self):
         """
@@ -271,13 +271,15 @@ class Display(Runnable):
         except InterruptedException:
             Thread.currentThread().interrupt()
 
-    def update(self, *rect_list):
+    def update(self, rect_list=None):
         """
         Repaint display.
-        An optional rect_list to specify regions to repaint.
+        Optional rect or rect list to specify regions to repaint.
         """
-        if rect_list:
-            self._rect_list = rect_list[0]
+        if isinstance(rect_list, list):
+            self._rect_list = rect_list
+        elif rect_list:
+            self._rect_list = [rect_list]
         else:
             self._rect_list = self._surface_rect
         try:
@@ -286,24 +288,16 @@ class Display(Runnable):
             Thread.currentThread().interrupt()
 
     def run(self):
-        try:
-            for rect in self._rect_list:
-                try:
-                    self.jpanel.repaint(rect.x,rect.y,rect.width,rect.height)
-                except AttributeError:
-                    try:
-                        self.jpanel.repaint(rect[0],rect[1],rect[2],rect[3])
-                    except TypeError:
-                        if rect is None:
-                            continue
-                        else:
-                            rect = self._rect_list
-                            try:
-                                self.jpanel.repaint(rect.x,rect.y,rect.width,rect.height)
-                            except AttributeError:
-                                self.jpanel.repaint(rect[0],rect[1],rect[2],rect[3])
-                            break
-        except TypeError:
-            if self._rect_list is not None:
-                raise ValueError
+        repaint = False
+        for rect in self._rect_list:
+            if isinstance(rect, Rect):
+                if self._surfaceRect.intersects(rect):
+                    self.jpanel.repaint(rect)
+                    repaint = True
+            elif rect:
+                if self._surfaceRect.intersects(rect[0],rect[1],rect[2],rect[3]):
+                    self.jpanel.repaint(rect[0],rect[1],rect[2],rect[3])
+                    repaint = True
+        if repaint:
+            self.jpanel._repainting.set(True)
 

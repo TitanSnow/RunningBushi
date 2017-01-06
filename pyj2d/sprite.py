@@ -1,8 +1,8 @@
 #PyJ2D - Copyright (C) 2011 James Garnon <http://gatc.ca/>
 #Released under the MIT License <http://opensource.org/licenses/MIT>
 
-from rect import rectPool
-import mask
+from pyj2d.rect import rectPool
+from pyj2d import mask
 
 __docformat__ = 'restructuredtext'
 
@@ -23,29 +23,27 @@ class Sprite(object):
         """
         Return Sprite.
         Optional argument inludes group(s) to place sprite.
-        Sprite can have image and rect attributes.
+        Sprite require image and rect attributes for some functionality.
         """
-        self.x = None
-        self.y = None
-        self.image = None
-        self.rect = None
-        for group in groups:
-            if self not in group:
-                group.add(self)
+        self._groups = {}
+        if groups:
+            self.add(*groups)
 
     def __repr__(self):
         """
         Return string representation of Sprite object.
         """
-        return "%s(in %d groups)" % (self.__class__, len(self.groups()))
+        return "%s(in %d groups)" % (self.__class__, len(self._groups))
 
     def add(self, *groups):
         """
         Add sprite to group(s).
         """
         for group in groups:
-            if self not in group:
+            if hasattr(group, '_sprites'):
                 group.add(self)
+            else:
+                self.add(*group)
         return None
 
     def remove(self, *groups):
@@ -53,33 +51,34 @@ class Sprite(object):
         Remove sprite from group(s).
         """
         for group in groups:
-            if self in group:
+            if hasattr(group, '_sprites'):
                 group.remove(self)
+            else:
+                self.remove(*group)
         return None
 
     def kill(self):
         """
         Remove sprite from all member groups.
         """
-        for group in Group._groups:
-            if self in group:
-                group.remove(self)
+        for group in self._groups.values():
+            group.remove(self)
         return None
 
     def alive(self):
         """
         Return True if sprite is member of any groups.
         """
-        for group in Group._groups:
-            if self in group:
-                return True
-        return False
+        if self._groups:
+            return True
+        else:
+            return False
 
     def groups(self):
         """
         Return list of groups that sprite is a member.
         """
-        return [group for group in Group._groups if self in group]
+        return self._groups.values()
 
     def update(self, *args):
         """
@@ -118,18 +117,14 @@ class Group(object):
     * Group.update
     """
 
-    _groups = []
-
     def __init__(self, *sprites):
         """
         Return Group.
         Can optionally be called with sprite(s) to add.
         """
-        Group._groups.append(self)
         self._sprites = {}
         if sprites:
-            for sprite in sprites:
-                self._sprites[id(sprite)] = sprite
+            self.add(*sprites)
         self._clear_active = False
         self._sprites_drawn = {}
 
@@ -176,7 +171,13 @@ class Group(object):
         Add sprite(s) to group.
         """
         for sprite in sprites:
-            self._sprites[id(sprite)] = sprite
+            if hasattr(sprite, '_groups'):
+                spriteID = id(sprite)
+                if spriteID not in self._sprites:
+                    self._sprites[spriteID] = sprite
+                    sprite._groups[id(self)] = self
+            else:
+                self.add(*sprite)
         return None
 
     def remove(self, *sprites):
@@ -184,31 +185,33 @@ class Group(object):
         Remove sprite(s) from group.
         """
         for sprite in sprites:
-            try:
-                del self._sprites[id(sprite)]
-            except KeyError:
-                pass
+            if hasattr(sprite, '_groups'):
+                spriteID = id(sprite)
+                if spriteID in self._sprites:
+                    del self._sprites[spriteID]
+                    del sprite._groups[id(self)]
+            else:
+                self.remove(*sprite)
         return None
 
     def has(self, *sprites):
         """
         Check if all sprite(s) in group.
         """
-        try:
-            if not isinstance(sprites[0], Sprite):
-                sprites = sprites[0]
-        except IndexError:
-            return False
         for sprite in sprites:
-            if id(sprite) not in self._sprites.iterkeys():
-                return False
+            if hasattr(sprite, '_groups'):
+                if id(sprite) not in self._sprites:
+                    return False
+            else:
+                if not self.has(*sprite):
+                    return False
         return True
 
     def draw(self, surface):
         """
         Draw sprite on surface.
         """
-        surface.blits([(sprite.image,sprite.rect) for sprite in self._sprites.itervalues()])
+        surface._blits([(sprite.image,sprite.rect) for sprite in self._sprites.itervalues()])
         if self._clear_active:
             rectPool.extend(self._sprites_drawn.values())
             self._sprites_drawn.clear()
@@ -222,8 +225,8 @@ class Group(object):
         The background argument can be a callback function.
         """
         self._clear_active = True
-        if hasattr(background, 'subarea'):
-            surface.blits([background.subarea(self._sprites_drawn[sprite]) for sprite in self._sprites_drawn])
+        if hasattr(background, 'width'):
+            surface._blit_clear(background, self._sprites_drawn.itervalues())
         else:
             for sprite in self._sprites_drawn:
                 background(surface, self._sprites_drawn[sprite])
@@ -232,6 +235,8 @@ class Group(object):
         """
         Empty group.
         """
+        for sprite in self._sprites.itervalues():
+            del sprite._groups[id(self)]
         self._sprites.clear()
         return None
 
@@ -266,17 +271,18 @@ class GroupSingle(Group):
         Get Group.sprite.
         """
         if attr == 'sprite':
-            try:
+            if self._sprites:
                 return self._sprites.values()[0]
-            except:
+            else:
                 return None
 
     def add(self, sprite):
         """
         Add sprite to group, replacing existing sprite.
         """
-        self._sprites.clear()
+        self.empty()
         self._sprites[id(sprite)] = sprite
+        sprite._groups[id(self)] = self
         return None
 
     def update(self, *args, **kwargs):
@@ -307,17 +313,17 @@ class RenderUpdates(Group):
         Draw sprite on surface.
         Returns list of Rect of sprites updated, which can be passed to display.update.
         """
-        surface.blits([(sprite.image,sprite.rect) for sprite in self._sprites.itervalues()])
+        surface._blits([(sprite.image,sprite.rect) for sprite in self._sprites.itervalues()])
         if self._clear_active:
             rectPool.extend(self.changed_areas)
             self.changed_areas[:] = []
             for sprite in self._sprites:
-                try:
+                if sprite in self._sprites_drawn:
                     if self._sprites_drawn[sprite].intersects(self._sprites[sprite].rect):
                         self._sprites_drawn[sprite].union_ip(self._sprites[sprite].rect)
                     else:
                         self.changed_areas.append(rectPool.copy(self._sprites[sprite].rect))
-                except KeyError:
+                else:
                     self.changed_areas.append(rectPool.copy(self._sprites[sprite].rect))
             self.changed_areas.extend(self._sprites_drawn.values())
             self._sprites_drawn.clear()
@@ -359,9 +365,9 @@ class OrderedUpdates(RenderUpdates):
         """
         Provides iterator to sprites in Group.
         """
-        try:
+        if self.sort:
             order_sprite = iter(self.sort)
-        except TypeError:
+        else:
             keys = self.order.keys()
             keys.sort()
             self.sort = [self._sprites[self.order[key]] for key in keys]
@@ -372,9 +378,9 @@ class OrderedUpdates(RenderUpdates):
         """
         Return ordered list of sprites in the group.
         """
-        try:
+        if self.sort:
             order_sprite = self.sort[:]
-        except TypeError:
+        else:
             keys = self.order.keys()
             keys.sort()
             self.sort = [self._sprites[self.order[key]] for key in keys]
@@ -398,12 +404,12 @@ class OrderedUpdates(RenderUpdates):
         """
         for sprite in sprites:
             if sprite not in self._sprites:
-                try:
-                    index = self.index.next()
+                index = self._get_index()
+                if index is not None:
                     spriteID = id(sprite)
                     self.order[index] = spriteID
                     self.place[spriteID] = index
-                except StopIteration:
+                else:
                     keys = self.order.keys()
                     keys.sort()
                     if len(keys)*2 > self.range:
@@ -424,17 +430,21 @@ class OrderedUpdates(RenderUpdates):
         RenderUpdates.add(self, *sprites, **kwargs)     #*tuple unpack error kwargs fix
         return None
 
+    def _get_index(self):
+        try:
+            return self.index.next()
+        except StopIteration:
+            return None
+
     def remove(self, *sprites, **kwargs):
         """
         Remove sprite(s) from group.
         """
         for sprite in sprites:
-            try:
-                spriteID = id(sprite)
+            spriteID = id(sprite)
+            if spriteID in self.place:
                 del self.order[self.place[spriteID]]
                 del self.place[spriteID]
-            except KeyError:
-                continue
         self.sort = None
         RenderUpdates.remove(self, *sprites, **kwargs)     #*tuple unpack error kwargs fix
         return None
@@ -453,24 +463,24 @@ class OrderedUpdates(RenderUpdates):
         """
         Draw sprite on surface in order of addition.
         """
-        try:
+        if self.sort:
             order_sprite = iter(self.sort)
-        except TypeError:
+        else:
             keys = self.order.keys()
             keys.sort()
             self.sort = [self._sprites[self.order[key]] for key in keys]
             order_sprite = iter(self.sort)
-        surface.blits([(sprite.image,sprite.rect) for sprite in order_sprite])
+        surface._blits([(sprite.image,sprite.rect) for sprite in order_sprite])
         if self._clear_active:
             rectPool.extend(self.changed_areas)
             self.changed_areas[:] = []
             for sprite in self._sprites:
-                try:
+                if sprite in self._sprites_drawn:
                     if self._sprites_drawn[sprite].intersects(self._sprites[sprite].rect):
                         self._sprites_drawn[sprite].union_ip(self._sprites[sprite].rect)
                     else:
                         self.changed_areas.append(rectPool.copy(self._sprites[sprite].rect))
-                except KeyError:
+                else:
                     self.changed_areas.append(rectPool.copy(self._sprites[sprite].rect))
             self.changed_areas.extend(self._sprites_drawn.values())
             self._sprites_drawn.clear()
@@ -631,26 +641,21 @@ def collide_mask(sprite1, sprite2):
     **pyj2d.sprite.collide_mask**
     
     Check if mask of sprites intersect.
+    Will use sprite mask attribute or mask generated from image attribute.
     Can be used as spritecollide callback function.
     """
-    clip = sprite1.rect.intersection(sprite2.rect)
-    if clip.width < 1 or clip.height < 1:
+    if hasattr(sprite1, 'mask'):
+        mask1 = sprite1.mask
+    else:
+        mask1 = mask.from_surface(sprite1.image)
+    if hasattr(sprite2, 'mask'):
+        mask2 = sprite2.mask
+    else:
+        mask2 = mask.from_surface(sprite2.image)
+    if mask1.overlap(mask2, (sprite2.rect.x-sprite1.rect.x,sprite2.rect.y-sprite1.rect.y)):
+        return True
+    else:
         return False
-    x1,y1 = clip.x-sprite1.rect.x, clip.y-sprite1.rect.y
-    x2,y2 = clip.x-sprite2.rect.x, clip.y-sprite2.rect.y
-    masks = []
-    for sprite in (sprite1, sprite2):
-        try:
-            masks.append(sprite.mask)
-        except AttributeError:
-            masks.append(mask.from_surface(sprite.image))
-    for y in range(clip.height):
-        try:
-            if masks[0].bit[y1+y].get(x1, x1+clip.width).intersects(masks[1].bit[y2+y].get(x2, x2+clip.width)):
-                return True
-        except IndexError:
-            continue
-    return False
 
 
 def groupcollide(group1, group2, dokill1, dokill2):

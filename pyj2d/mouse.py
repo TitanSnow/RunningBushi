@@ -4,7 +4,9 @@
 from __future__ import division
 from java.awt.image import BufferedImage
 from java.awt import Toolkit, Point, AWTError
-import env
+from java.awt import Cursor
+from pyj2d import cursors
+from pyj2d import env
 import pyj2d.event
 
 __docformat__ = 'restructuredtext'
@@ -18,6 +20,8 @@ class Mouse(object):
     * pyj2d.mouse.get_pos
     * pyj2d.mouse.get_rel
     * pyj2d.mouse.set_visible
+    * pyj2d.mouse.set_cursor
+    * pyj2d.mouse.get_cursor
     """
 
     def __init__(self):
@@ -28,7 +32,9 @@ class Mouse(object):
         """
         self.mousePress = pyj2d.event.mousePress
         self.mousePos = {'x':0, 'y':0}
-        self._visible = True
+        self._cursorVisible = True
+        self._cursorBlank = None
+        self._cursor = None
         self._nonimplemented_methods()
 
     def get_pressed(self):
@@ -66,19 +72,72 @@ class Mouse(object):
         Set mouse cursor visibility according to visible bool argument.
         Return previous cursor visibility state.
         """
-        visible_pre = self._visible
+        visible_pre = self._cursorVisible
         if visible:
-            env.jframe.getContentPane().setCursor(None)
-            self._visible = True
+            if not self._cursor:
+                self._cursor = Cursor(Cursor.DEFAULT_CURSOR)
+            env.jframe.getContentPane().setCursor(self._cursor)
+            self._cursorVisible = True
         else:
-            image = BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB)
-            try:
-                cursor = Toolkit.getDefaultToolkit().createCustomCursor(image, Point(0,0), 'blank cursor')
-                env.jframe.getContentPane().setCursor(cursor)
-            except AWTError:
-                return visible_pre
-            self._visible = False
+            if not self._cursorBlank:
+                image = BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB)
+                hotspot = Point(0,0)
+                name = 'Blank Cursor'
+                try:
+                    self._cursorBlank = Toolkit.getDefaultToolkit().createCustomCursor(image, hotspot, name)
+                except AWTError:
+                    return visible_pre
+            env.jframe.getContentPane().setCursor(self._cursorBlank)
+            self._cursorVisible = False
         return visible_pre
+
+    def set_cursor(self, *cursor):
+        """
+        Set mouse cursor.
+        Alternative arguments:
+        * JVM system cursor or cursor object
+        * image or surface, hotspot (x,y), and optional name
+        * size, hotspot, data, mask, and optional name
+        Refer to pyj2d.cursors for details.
+        """
+        args = len(cursor)
+        if len(cursor) == 1:
+            if isinstance(cursor[0], int):
+                self._cursor = Cursor(cursor[0])
+            else:
+                self._cursor = cursor[0]
+        elif args in (2,3):
+            image = cursor[0]
+            hotspot = Point(*cursor[1])
+            if args == 2:
+                name = 'Custom Cursor'
+            else:
+                name = cursor[2]
+            self._cursor = Toolkit.getDefaultToolkit().createCustomCursor(image, hotspot, name)
+        elif args in (4,5):
+            size = cursor[0]
+            hotspot = Point(*cursor[1])
+            data = cursor[2]
+            mask = cursor[3]
+            if args == 4:
+                name = 'Custom Cursor'
+            else:
+                name = cursor[4]
+            surface = cursors.create_cursor(size, data, mask)
+            self._cursor = Toolkit.getDefaultToolkit().createCustomCursor(surface, hotspot, name)
+        else:
+            self._cursor = Cursor(Cursor.DEFAULT_CURSOR)
+        if self._cursorVisible:
+            env.jframe.getContentPane().setCursor(self._cursor)
+
+    def get_cursor(self):
+        """
+        Return cursor object.
+        Cursor type and name accessed with object getType and getName methods.
+        """
+        if not self._cursor:
+            self._cursor = Cursor(Cursor.DEFAULT_CURSOR)
+        return self._cursor
 
     def _nonimplemented_methods(self):
         """
@@ -86,6 +145,4 @@ class Mouse(object):
         """
         self.set_pos = lambda *arg: None
         self.get_focused = lambda *arg: True
-        self.set_cursor = lambda *arg: None
-        self.get_cursor = lambda *arg: ()
 

@@ -2,11 +2,11 @@
 #Released under the MIT License <http://opensource.org/licenses/MIT>
 
 from __future__ import division
-from math import pi
+from math import pi as _pi
 from java.awt import BasicStroke, RenderingHints
 from java.awt.geom import Ellipse2D
-from rect import Rect
-from color import Color
+from pyj2d.rect import Rect
+from pyj2d.color import Color
 
 __docformat__ = 'restructuredtext'
 
@@ -32,7 +32,7 @@ class Draw(object):
         
         Module initialization creates pyj2d.draw instance.
         """
-        self.rad_deg = 180/pi
+        self.rad_deg = 180/_pi
 
     def rect(self, surface, color, rect, width=0):
         """
@@ -116,9 +116,9 @@ class Draw(object):
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
         if width:
             g.setStroke(BasicStroke(width))
-            g.drawArc(rect.x-(rect.width//8), rect.y-(rect.height//8), rect.width, rect.height, start_angle, stop_angle)
+            g.drawArc(rect.x, rect.y, rect.width-1, rect.height-1, start_angle, stop_angle)
         else:
-            g.fillArc(rect.x-(rect.width//8), rect.y-(rect.height//8), rect.width, rect.height, start_angle, stop_angle)
+            g.fillArc(rect.x, rect.y, rect.width-1, rect.height-1, start_angle, stop_angle)
         g.dispose()
         return surface.get_rect().clip(rect)
 
