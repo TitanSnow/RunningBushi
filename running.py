@@ -219,8 +219,8 @@ while True:
                     pShoot.remove(psh)
                     breakaway=True
                     cShoot+=2
-                    break;
-            if breakaway:continue;
+                    break
+            if breakaway:continue
             for pway in pWays:
                 x1=psh[0]
                 x2=pway[0]
@@ -239,7 +239,7 @@ while True:
                     pShoot.remove(psh)
                     breakaway=True
                     break
-            if breakaway:continue;
+            if breakaway:continue
             psh[0]+=shootRate            
         
         #move antman
