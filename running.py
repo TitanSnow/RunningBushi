@@ -110,7 +110,6 @@ def getChineseFont(name,size):
 while True:
     #get clock
     clock=pygame.time.Clock()
-    clock2=pygame.time.Clock()
 
     #text
     my_font=getChineseFont(fontName,tipHeight)
@@ -163,7 +162,6 @@ while True:
     while True:
         #sleep
         pygame.time.delay(33)
-        timeout=clock2.tick()
         
         #change coldDown
         if coldDown>0:
@@ -304,7 +302,7 @@ while True:
                         for pway in pWays:
                             pway[1]=scrHeight-hWay
                         pAnts=[]
-                        pygame.time.delay(1000)
+                        pygame.time.wait(1000)
                         coldDown=coldDownTimeout*30
                 
                 #debug
@@ -343,7 +341,7 @@ while True:
         #draw
         screen.fill(black)
         screen.blit(tip,(scrWidth-rectTip.right,0))
-        screen.blit(my_font.render(u"帧率: "+str(int(1000/timeout))+u" 分数: "+str(scope),False,white),(0,0))
+        screen.blit(my_font.render(u"帧率: "+str(int(clock.get_fps()))+u" 分数: "+str(scope),False,white),(0,0))
         coldDownImg=pygame.Surface((max(int(scrWidth*1.0/coldDownTimeout/30*coldDown),1),tipHeight))
         coldDownImg.fill(white)
         screen.blit(coldDownImg,(0,tipHeight))
@@ -373,7 +371,7 @@ while True:
             screen.blit(tip2Img,(scrWidth//2-tip2Img.get_rect().right//2,scrHeight//2+textImg.get_rect().bottom//2+tipImg.get_rect().bottom))
             pygame.display.update()
             while True:
-                pygame.time.delay(1000)
+                pygame.time.wait(1000)
                 for e in pygame.event.get():
                     if e.type==QUIT:sys.exit()
                     elif e.type==KEYDOWN:
