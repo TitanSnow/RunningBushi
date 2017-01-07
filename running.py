@@ -91,20 +91,7 @@ def is_equral_surface(a,b):
             if a.get_at((x,y))!=b.get_at((x,y)):
                 return False
     return True
-def getChineseFont(name,size):
-    if name==None:
-        # find by myself
-        fs=pygame.font.get_fonts()
-        for fn in fs:
-            fp=pygame.font.match_font(fn)
-            f=pygame.font.Font(fp,size)
-            a=f.render(u"一",False,black,white)
-            b=f.render(u"二",False,black,white)
-            if not is_equral_surface(a,b):
-                # found it!
-                name=fp
-                #print(u"Select '"+fn+u"' at '"+name+u"' in "+str(fs))
-                break
+def getFont(name,size):
     return pygame.font.Font(name,size)
 
 while True:
@@ -112,11 +99,11 @@ while True:
     clock=pygame.time.Clock()
 
     #text
-    my_font=getChineseFont(fontName,tipHeight)
-    tip=my_font.render(u"ESC: 退出  空格: 开始&跳  回车: 放大招  S：射击",True,white)
-    coldDownTip=my_font.render(u"大招冷却",True,black)
+    my_font=getFont(fontName,tipHeight)
+    tip=my_font.render("ESC: exit  Space: start&jump  Enter: purge  S: shoot",True,white)
+    coldDownTip=my_font.render("Colddown",True,black)
     rectTip=tip.get_rect()
-    shootTip=my_font.render(u"弹药量：",True,white)
+    shootTip=my_font.render("Silver Bullets: ",True,white)
     rectShootTip=shootTip.get_rect()
 
     #ranger vars
@@ -151,12 +138,12 @@ while True:
     debugMode=False
 
     #game end tip
-    gameEndTip=u""
-    hitWallTips=(u"谁让你撞墙的！",u"Ouch!",u"呯！",u"果然是一个大包！",u"长点眼！",u"此路不通",u"痛死我了！")
-    antEatTips=(u"您已被蚂蚁吃了",u"好饱！——蚂蚁",u"不留尸骨",u"食人蚁正在庆祝",u"谁咬了我一口！",u"站在食物链最低端——贝尔")
+    gameEndTip=""
+    hitWallTips=("A Great Wall!","Ouch!","Bang!","What A Nasty Scar!","Watch Out!","No Way!","Hurt!")
+    antEatTips=("Eaten by Ant!","Full Stomache! --Ant","Nothing Left","Ants Are Celebrating","Who Bit Me!","Standing at the Bottom of the Food Chain")
 
     #game start tip
-    gameStartTipImg=my_font.render(u"按空格开始生存之旅",True,white)
+    gameStartTipImg=my_font.render("Space to Run!",True,white)
 
     #main loop
     while True:
@@ -341,7 +328,7 @@ while True:
         #draw
         screen.fill(black)
         screen.blit(tip,(scrWidth-rectTip.right,0))
-        screen.blit(my_font.render(u"帧率: "+str(int(clock.get_fps()))+u" 分数: "+str(scope),False,white),(0,0))
+        screen.blit(my_font.render("fps: "+str(int(clock.get_fps()))+" Score: "+str(scope),False,white),(0,0))
         coldDownImg=pygame.Surface((max(int(scrWidth*1.0/coldDownTimeout/30*coldDown),1),tipHeight))
         coldDownImg.fill(white)
         screen.blit(coldDownImg,(0,tipHeight))
@@ -363,9 +350,9 @@ while True:
         #is game end?
         rewhile=True
         if gameEnd and not debugMode:
-            textImg=getChineseFont(fontName,gameOverHeight).render(u"GAME OVER",True,red)
+            textImg=getFont(fontName,gameOverHeight).render("GAME OVER",True,red)
             tipImg=my_font.render(gameEndTip,True,red)
-            tip2Img=my_font.render(u"按空格？Begin again.",True,white)
+            tip2Img=my_font.render("Press Space? Begin again.",True,white)
             screen.blit(textImg,(scrWidth//2-textImg.get_rect().right//2,scrHeight//2-textImg.get_rect().bottom//2))
             screen.blit(tipImg,(scrWidth//2-tipImg.get_rect().right//2,scrHeight//2+textImg.get_rect().bottom//2))
             screen.blit(tip2Img,(scrWidth//2-tip2Img.get_rect().right//2,scrHeight//2+textImg.get_rect().bottom//2+tipImg.get_rect().bottom))
