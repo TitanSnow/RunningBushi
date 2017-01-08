@@ -1,3 +1,4 @@
+#!/usr/bin/env jython
 # coding:UTF-8
 # This is free and unencumbered software released into the public domain.
 #
