@@ -51,8 +51,8 @@ hWay=16
 hStepWay=32
 fps=60
 black=(0,0,0)
-white=(255,255,255)
-red=(255,0,0)
+white=(64,64,64)
+red=(64,0,0)
 tipHeight=16
 gameOverHeight=128
 # Put your font's path next line!!!
