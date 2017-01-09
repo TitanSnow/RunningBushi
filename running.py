@@ -151,7 +151,7 @@ while True:
     realFrame=True
     while True:
         #sleep
-        clock.tick(fps)
+        clock.tick_busy_loop(fps)
 
         if not realFrame:
             #draw fake frame
