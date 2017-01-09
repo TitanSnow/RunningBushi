@@ -50,7 +50,7 @@ pDownRate=1
 wWay=64
 hWay=16
 hStepWay=32
-fps=30
+fps=60
 black=(0,0,0)
 white=(255,255,255)
 red=(255,0,0)
@@ -69,6 +69,7 @@ shootRate=16
 #init
 pygame.init()
 screen=pygame.display.set_mode((scrWidth,scrHeight))
+fakeScreen=pygame.Surface((scrWidth,scrHeight))
 
 #import images
 def decodeMyBase64Img(b64):
@@ -148,9 +149,19 @@ while True:
     gameStartTipImg=my_font.render("Space to Run!",True,white)
 
     #main loop
+    realFrame=True
     while True:
         #sleep
         clock.tick(fps)
+
+        if not realFrame:
+            #draw fake frame
+            screen.blit(fakeScreen,(0,0))
+            pygame.display.update()
+            realFrame=True
+            continue
+        else:
+            realFrame=False
         
         #change coldDown
         if coldDown>0:
@@ -330,24 +341,36 @@ while True:
         
         #draw
         screen.fill(black)
+        fakeScreen.fill(black)
         screen.blit(tip,(scrWidth-rectTip.right,0))
+        fakeScreen.blit(tip,(scrWidth-rectTip.right,0))
         screen.blit(my_font.render("fps: "+str(int(clock.get_fps()))+" Score: "+str(scope),False,white),(0,0))
+        fakeScreen.blit(my_font.render("fps: "+str(int(clock.get_fps()))+" Score: "+str(scope),False,white),(0,0))
         coldDownImg=pygame.Surface((max(int(scrWidth*1.0/coldDownTimeout/30*coldDown),1),tipHeight))
         coldDownImg.fill(white)
         screen.blit(coldDownImg,(0,tipHeight))
+        fakeScreen.blit(coldDownImg,(0,tipHeight))
         screen.blit(coldDownTip,(0,tipHeight))
+        fakeScreen.blit(coldDownTip,(0,tipHeight))
         screen.blit(shootTip,(0,2*tipHeight))
+        fakeScreen.blit(shootTip,(0,2*tipHeight))
         for i in range(0,cShoot):
             screen.blit(shootImg,(rectShootTip.right+i*(wShoot+4),2*tipHeight+tipHeight//2-hShoot//2))
+            fakeScreen.blit(shootImg,(rectShootTip.right+i*(wShoot+4),2*tipHeight+tipHeight//2-hShoot//2))
         screen.blit(rangerImg,(xRanger,yRanger))
+        fakeScreen.blit(rangerImg,(xRanger,yRanger))
         for pway in pWays:
             screen.blit(wayImg,pway)
+            fakeScreen.blit(wayImg,(pway[0]+wayRate//2,pway[1]))
         for pant in pAnts:
             screen.blit(antmanImg,pant)
+            fakeScreen.blit(antmanImg,pant)
         for pshoot in pShoot:
             screen.blit(shootImg,pshoot)
+            fakeScreen.blit(shootImg,(pshoot[0]+shootRate//2,pshoot[1]))
         if not startMoveRanger:
             screen.blit(gameStartTipImg,(scrWidth//2-gameStartTipImg.get_rect().right//2,scrHeight//2-gameStartTipImg.get_rect().bottom//2))
+            fakeScreen.blit(gameStartTipImg,(scrWidth//2-gameStartTipImg.get_rect().right//2,scrHeight//2-gameStartTipImg.get_rect().bottom//2))
         pygame.display.update()
         
         #is game end?
