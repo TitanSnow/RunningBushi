@@ -32,6 +32,7 @@ import sys
 import random
 import base64
 import StringIO
+from java.lang import System
 
 #consts
 rangerImgFileName="ranger.gif"
@@ -303,6 +304,7 @@ while True:
                         for pway in pWays:
                             pway[1]=scrHeight-hWay
                         pAnts=[]
+                        System.gc()
                         pygame.time.wait(1000)
                         coldDown=coldDownTimeout*30
                 
@@ -371,6 +373,7 @@ while True:
             screen.blit(tipImg,(scrWidth//2-tipImg.get_rect().right//2,scrHeight//2+textImg.get_rect().bottom//2))
             screen.blit(tip2Img,(scrWidth//2-tip2Img.get_rect().right//2,scrHeight//2+textImg.get_rect().bottom//2+tipImg.get_rect().bottom))
             pygame.display.update()
+            System.gc()
             while True:
                 pygame.time.wait(1000)
                 for e in pygame.event.get():
