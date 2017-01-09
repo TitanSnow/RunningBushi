@@ -28,7 +28,6 @@
 from myimgbase64 import *
 import pyj2d as pygame
 from pyj2d.locals import *
-import sys
 import random
 import base64
 import StringIO
@@ -301,9 +300,9 @@ while True:
         
         #get event
         for e in pygame.event.get():
-            if e.type==QUIT:sys.exit()
+            if e.type==QUIT:System.exit(0)
             elif e.type==KEYDOWN:
-                if e.key==K_ESCAPE:sys.exit()
+                if e.key==K_ESCAPE:System.exit(0)
                 elif e.key==K_SPACE:
                     startMoveRanger=True
                     if yRanger+hRanger==scrHeight-maxhWay:
@@ -400,9 +399,9 @@ while True:
             while True:
                 pygame.time.wait(1000)
                 for e in pygame.event.get():
-                    if e.type==QUIT:sys.exit()
+                    if e.type==QUIT:System.exit(0)
                     elif e.type==KEYDOWN:
-                        if e.key==K_ESCAPE:sys.exit()
+                        if e.key==K_ESCAPE:System.exit(0)
                         if e.key==K_SPACE:
                             rewhile=False
                 if not rewhile:break
