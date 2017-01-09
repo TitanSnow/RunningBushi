@@ -67,7 +67,8 @@ shootRate=16
 
 #init
 pygame.init()
-screen=pygame.display.set_mode((scrWidth,scrHeight))
+realScreen=pygame.display.set_mode((scrWidth//2,scrHeight//2))
+screen=pygame.Surface((scrWidth,scrHeight))
 fakeScreen=pygame.Surface((scrWidth,scrHeight))
 
 #import images
@@ -155,7 +156,7 @@ while True:
 
         if not realFrame:
             #draw fake frame
-            screen.blit(fakeScreen,(0,0))
+            pygame.transform.scale(fakeScreen,(scrWidth//2,scrHeight//2),realScreen)
             pygame.display.update()
             realFrame=True
             continue
@@ -296,7 +297,7 @@ while True:
                         ayRanger=-12
                 elif e.key==K_RETURN:
                     if startMoveRanger and coldDown==0:
-                        screen.fill(red)
+                        realScreen.fill(red)
                         pygame.display.update()
                         for pway in pWays:
                             pway[1]=scrHeight-hWay
@@ -370,6 +371,7 @@ while True:
         if not startMoveRanger:
             screen.blit(gameStartTipImg,(scrWidth//2-gameStartTipImg.get_rect().right//2,scrHeight//2-gameStartTipImg.get_rect().bottom//2))
             fakeScreen.blit(gameStartTipImg,(scrWidth//2-gameStartTipImg.get_rect().right//2,scrHeight//2-gameStartTipImg.get_rect().bottom//2))
+        pygame.transform.scale(screen,(scrWidth//2,scrHeight//2),realScreen)
         pygame.display.update()
         
         #is game end?
@@ -381,6 +383,7 @@ while True:
             screen.blit(textImg,(scrWidth//2-textImg.get_rect().right//2,scrHeight//2-textImg.get_rect().bottom//2))
             screen.blit(tipImg,(scrWidth//2-tipImg.get_rect().right//2,scrHeight//2+textImg.get_rect().bottom//2))
             screen.blit(tip2Img,(scrWidth//2-tip2Img.get_rect().right//2,scrHeight//2+textImg.get_rect().bottom//2+tipImg.get_rect().bottom))
+            pygame.transform.scale(screen,(scrWidth//2,scrHeight//2),realScreen)
             pygame.display.update()
             System.gc()
             while True:
