@@ -30,6 +30,11 @@ from pygame.locals import *
 import sys
 import random
 
+#reimplement randint for speed
+def myrandint(l,r):
+    return int(random.random()*(r-l+1)+l)
+random.randint=myrandint
+
 #consts
 rangerImgFileName="ranger.gif"
 antmanImgFileName="antman.gif"
