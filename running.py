@@ -61,6 +61,7 @@ randAntman=0.05
 wShoot=8
 hShoot=8
 shootRate=16
+maxNoisePoint=1024
 
 #init
 pygame.init()
@@ -75,6 +76,14 @@ shootImg=pygame.image.load(shootImgFileName).convert_alpha()
 #functions
 def getFont(name,size):
     return pygame.font.Font(name,size)
+def getRandColor():
+    return (random.randint(0,255),random.randint(0,255),random.randint(0,255))
+def makeNoise(sf):
+    sf.lock()
+    w,h=sf.get_size()
+    for i in range(random.randint(0,maxNoisePoint)):
+        sf.set_at((random.randint(0,w-1),random.randint(0,h-1)),getRandColor())
+    sf.unlock()
 
 while True:
     #get clock
@@ -135,6 +144,7 @@ while True:
 
         if not realFrame:
             #draw fake frame
+            makeNoise(fakeScreen)
             screen.blit(fakeScreen,(0,0))
             pygame.display.update()
             realFrame=True
@@ -349,6 +359,7 @@ while True:
         if not startMoveRanger:
             screen.blit(gameStartTipImg,(scrWidth//2-gameStartTipImg.get_rect().right//2,scrHeight//2-gameStartTipImg.get_rect().bottom//2))
             fakeScreen.blit(gameStartTipImg,(scrWidth//2-gameStartTipImg.get_rect().right//2,scrHeight//2-gameStartTipImg.get_rect().bottom//2))
+        makeNoise(screen)
         pygame.display.update()
         
         #is game end?
