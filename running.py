@@ -85,13 +85,21 @@ else:shootImg=decodeMyBase64Img(shootBase64)
 
 #functions
 def is_equral_surface(a,b):
+    a.lock()
+    b.lock()
     if a.get_size()!=b.get_size():
+        a.unlock()
+        b.unlock()
         return False
     size=a.get_size()
     for x in range(0,size[0]):
         for y in range(0,size[1]):
             if a.get_at((x,y))!=b.get_at((x,y)):
+                a.unlock()
+                b.unlock()
                 return False
+    a.unlock()
+    b.unlock()
     return True
 def getFont(name,size):
     return pygame.font.Font(name,size)
