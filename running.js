@@ -89,7 +89,7 @@ addEventListener("load",function(){
             return new pygame.font.Font(name,size)
         }
 
-        (function times(){
+        ;(function times(){
             //get clock
             var clock=new pygame.time.Clock()
 
@@ -141,18 +141,18 @@ addEventListener("load",function(){
             var gameStartTipImg=my_font.render("Space to Run!",true,white)
 
             //main loop
-            var realFrame=true;
-            (function main_loop(){
+            var realFrame=true
+            ;(function main_loop(){
                 function sleep(){
-                    clock.tick(fps,main_loop);
+                    clock.tick(fps,main_loop)
                 }
                 if(!realFrame){
                     //draw fake frame
                     screen.blit(fakeScreen,[0,0])
                     pygame.display.update()
                     realFrame=true
-                    sleep();
-                    return;
+                    sleep()
+                    return
                 }
                 else
                     realFrame=false
@@ -199,7 +199,7 @@ addEventListener("load",function(){
                 var gameEnd=false
                 var onWays=[]
                 for(var i=0;i<pWays.length;++i){
-                    var pway=pWays[i];
+                    var pway=pWays[i]
                     if((xRanger>=pway[0]&&xRanger<=pway[0]+wWay)||(xRanger+wRanger>=pway[0]&&xRanger+wRanger<=pway[0]+wWay))
                         onWays.push(pway)
                     if(onWays.length==2)break
@@ -303,6 +303,7 @@ addEventListener("load",function(){
                 })
 
                 //get event
+                var isReturn=false
                 pygame.event.get().forEach(function(e){
                     if(e.type==QUIT)sys.exit()
                     else if(e.type==KEYDOWN){
@@ -321,8 +322,8 @@ addEventListener("load",function(){
                                 })
                                 pAnts=[]
                                 coldDown=coldDownTimeout*30
-                                pygame.time.wait(1000,main_loop);
-                                return;
+                                pygame.time.wait(1000,main_loop)
+                                isReturn=true
                             }
                         }
 
@@ -335,6 +336,7 @@ addEventListener("load",function(){
                         }
                     }
                 })
+                if(isReturn) return
 
                 //draw
                 screen.fill(black)
@@ -384,8 +386,8 @@ addEventListener("load",function(){
                     screen.blit(textImg,[Math.floor(scrWidth/2)-Math.floor(textImg.get_rect().right/2),Math.floor(scrHeight/2)-Math.floor(textImg.get_rect().bottom/2)])
                     screen.blit(tipImg,[Math.floor(scrWidth/2)-Math.floor(tipImg.get_rect().right/2),Math.floor(scrHeight/2)+Math.floor(textImg.get_rect().bottom/2)])
                     screen.blit(tip2Img,[Math.floor(scrWidth/2)-Math.floor(tip2Img.get_rect().right/2),Math.floor(scrHeight/2)+Math.floor(textImg.get_rect().bottom/2)+tipImg.get_rect().bottom])
-                    pygame.display.update();
-                    (function little_loop(){
+                    pygame.display.update()
+                    ;(function little_loop(){
                         pygame.event.get().forEach(function(e){
                             if(e.type==QUIT)sys.exit()
                             else if(e.type==KEYDOWN){
@@ -395,16 +397,16 @@ addEventListener("load",function(){
                             }
                         })
                         if(!rewhile){
-                            times();
-                            return;
+                            times()
+                            return
                         }
-                        pygame.time.wait(1000,little_loop);
+                        pygame.time.wait(1000,little_loop)
                     })()
-                    return;
+                    return
                 }
                 if(!rewhile){
-                    times();
-                    return;
+                    times()
+                    return
                 }
 
                 //sleep
