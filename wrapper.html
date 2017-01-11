@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script type="text/javascript">
+//<![CDATA[
+function center(){
+	var e=document.getElementById("world");
+	e.style.left=innerWidth/2-400+"px";
+	e.style.top=innerHeight/2-300+"px";
+}
+onresize=center;
+onload=function(){center();document.getElementById("world").focus();}
+//]]>
+</script>
+<style type="text/css">
+#world{
+	position: absolute;
+	width: 800px;
+	height: 600px;
+	overflow: hidden;
+	border: black 3px solid;
+	box-shadow: 0 0 30px black;
+}
+body{
+	background-color: rgb(209,209,209);
+}
+</style>
+</head>
+<body>
+<iframe src="running.html" id="world"></iframe>
+</body>
+</html>
