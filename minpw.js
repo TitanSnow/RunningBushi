@@ -10,7 +10,6 @@ var pygame={
 			this.canvas.width=this.width;
 			this.canvas.height=this.height;
 			this.context=this.canvas.getContext("2d");
-			this.fill([0,0,0])
 		}
 		this.Surface.prototype.blit=function(suf,pos){
 			if(suf instanceof that.fontFakeSurface)
@@ -148,5 +147,11 @@ var random={
 	},
 	choice:function(list){
 		return list[this.randint(0,list.length-1)];
+	}
+}
+function SystemExit(){}
+var sys={
+	exit:function(){
+		throw new SystemExit();
 	}
 }

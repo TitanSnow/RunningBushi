@@ -23,7 +23,7 @@
 //
 // For more information, please refer to <http://unlicense.org/>
 
-onload=function(){
+addEventListener("load",function(){
     "use strict"
     //consts
     var rangerImgFileName="ranger.gif"
@@ -303,56 +303,38 @@ onload=function(){
                 })
 
                 //get event
-                // for e in pygame.event.get():
-                //     if e.type==QUIT:sys.exit()
-                //     elif e.type==KEYDOWN:
-                //         if e.key==K_ESCAPE:sys.exit()
-                //         elif e.key==K_SPACE:
-                //             startMoveRanger=true
-                //             if yRanger+hRanger==scrHeight-maxhWay:
-                //                 ayRanger=-12
-                //         elif e.key==K_RETURN:
-                //             if startMoveRanger and coldDown==0:
-                //                 screen.fill(red)
-                //                 pygame.display.update()
-                //                 for pway in pWays:
-                //                     pway[1]=scrHeight-hWay
-                //                 pAnts=[]
-                //                 pygame.time.wait(1000)
-                //                 coldDown=coldDownTimeout*30
+                pygame.event.get().forEach(function(e){
+                    if(e.type==QUIT)sys.exit()
+                    else if(e.type==KEYDOWN){
+                        if(e.key==K_ESCAPE)sys.exit()
+                        else if(e.key==K_SPACE){
+                            startMoveRanger=true
+                            if(yRanger+hRanger==scrHeight-maxhWay)
+                                ayRanger=-12
+                        }
+                        else if(e.key==K_RETURN){
+                            if(startMoveRanger&&coldDown==0){
+                                screen.fill(red)
+                                pygame.display.update()
+                                pWays.forEach(function(pway){
+                                    pway[1]=scrHeight-hWay
+                                })
+                                pAnts=[]
+                                coldDown=coldDownTimeout*30
+                                pygame.time.wait(1000,main_loop);
+                                return;
+                            }
+                        }
 
-                //         //debug
-                //         elif e.key==K_d:
-                //             isReadyToDebug=true
-                //             lastChar='D'
-                //         elif e.key==K_e:
-                //             if isReadyToDebug and lastChar=='D':
-                //                 lastChar='E'
-                //             else:
-                //                 isReadyToDebug=false
-                //         elif e.key==K_b:
-                //             if isReadyToDebug and lastChar=='E':
-                //                 lastChar='B'
-                //             else:
-                //                 isReadyToDebug=false
-                //         elif e.key==K_u:
-                //             if isReadyToDebug and lastChar=='B':
-                //                 lastChar='U'
-                //             else:
-                //                 isReadyToDebug=false
-                //         elif e.key==K_g:
-                //             if isReadyToDebug and lastChar=='U':
-                //                 debugMode=true
-                //             else:
-                //                 isReadyToDebug=false
-                //         elif e.key==K_n:
-                //             debugMode=false
-
-                //         //shoot
-                //         elif e.key==K_s:
-                //             if startMoveRanger and cShoot>0:
-                //                 cShoot-=1
-                //                 pShoot.append([xRanger+wRanger,yRanger+hRanger-hAntman])
+                        //shoot
+                        else if(e.key==K_s){
+                            if(startMoveRanger&&cShoot>0){
+                                cShoot-=1
+                                pShoot.push([xRanger+wRanger,yRanger+hRanger-hAntman])
+                            }
+                        }
+                    }
+                })
 
                 //draw
                 screen.fill(black)
@@ -402,16 +384,22 @@ onload=function(){
                     screen.blit(textImg,[Math.floor(scrWidth/2)-Math.floor(textImg.get_rect().right/2),Math.floor(scrHeight/2)-Math.floor(textImg.get_rect().bottom/2)])
                     screen.blit(tipImg,[Math.floor(scrWidth/2)-Math.floor(tipImg.get_rect().right/2),Math.floor(scrHeight/2)+Math.floor(textImg.get_rect().bottom/2)])
                     screen.blit(tip2Img,[Math.floor(scrWidth/2)-Math.floor(tip2Img.get_rect().right/2),Math.floor(scrHeight/2)+Math.floor(textImg.get_rect().bottom/2)+tipImg.get_rect().bottom])
-                    pygame.display.update()
-                    //while true:
-                    //    pygame.time.wait(1000)
-                    //    for e in pygame.event.get():
-                    //        if e.type==QUIT:sys.exit()
-                    //        elif e.type==KEYDOWN:
-                    //            if e.key==K_ESCAPE:sys.exit()
-                    //            if e.key==K_SPACE:
-                    //                rewhile=false
-                    //    if not rewhile:break
+                    pygame.display.update();
+                    (function little_loop(){
+                        pygame.event.get().forEach(function(e){
+                            if(e.type==QUIT)sys.exit()
+                            else if(e.type==KEYDOWN){
+                                if(e.key==K_ESCAPE)sys.exit()
+                                if(e.key==K_SPACE)
+                                    rewhile=false
+                            }
+                        })
+                        if(!rewhile){
+                            times();
+                            return;
+                        }
+                        pygame.time.wait(1000,little_loop);
+                    })()
                     return;
                 }
                 if(!rewhile){
@@ -424,4 +412,4 @@ onload=function(){
             })()
         })()
     }
-}
+})
