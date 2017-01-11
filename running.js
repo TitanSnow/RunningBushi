@@ -26,47 +26,47 @@
 addEventListener("load",function(){
     "use strict"
     //consts
-    var rangerImgFileName="ranger.gif"
-    var antmanImgFileName="antman.gif"
-    var shootImgFileName="shoot.gif"
-    var scrWidth=800
-    var scrHeight=600
-    var wRanger=32
-    var hRanger=32
-    var wAntman=16
-    var hAntman=16
-    var antMoveRate=[-8,0]
-    var wayRate=-4
-    var pDownRate=1
-    var wWay=64
-    var hWay=16
-    var hStepWay=32
-    var fps=60
-    var black=[0,0,0]
-    var white=[255,255,255]
-    var red=[255,0,0]
-    var tipHeight=16
-    var gameOverHeight=128
+    let rangerImgFileName="ranger.gif"
+    let antmanImgFileName="antman.gif"
+    let shootImgFileName="shoot.gif"
+    let scrWidth=800
+    let scrHeight=600
+    let wRanger=32
+    let hRanger=32
+    let wAntman=16
+    let hAntman=16
+    let antMoveRate=[-8,0]
+    let wayRate=-4
+    let pDownRate=1
+    let wWay=64
+    let hWay=16
+    let hStepWay=32
+    let fps=60
+    let black=[0,0,0]
+    let white=[255,255,255]
+    let red=[255,0,0]
+    let tipHeight=16
+    let gameOverHeight=128
     // Put your font's path next line!!!
-    var fontName=null
-    var coldDownTimeout=32
-    var rand1Fall=0.98
-    var rand2Fall=0.995
-    var randAntman=0.05
-    var wShoot=8
-    var hShoot=8
-    var shootRate=16
+    let fontName=null
+    let coldDownTimeout=32
+    let rand1Fall=0.98
+    let rand2Fall=0.995
+    let randAntman=0.05
+    let wShoot=8
+    let hShoot=8
+    let shootRate=16
 
     //init
     pygame.init()
-    var screen=pygame.display.set_mode([scrWidth,scrHeight])
-    var fakeScreen=new pygame.Surface([scrWidth,scrHeight])
+    let screen=pygame.display.set_mode([scrWidth,scrHeight])
+    let fakeScreen=new pygame.Surface([scrWidth,scrHeight])
 
     //import images
-    var c_load_img=3
-    var rangerImg
-    var antmanImg
-    var shootImg
+    let c_load_img=3
+    let rangerImg
+    let antmanImg
+    let shootImg
     pygame.image.load(rangerImgFileName,function(img){
         rangerImg=img
         if(--c_load_img==0)
@@ -91,57 +91,57 @@ addEventListener("load",function(){
 
         ;(function times(){
             //get clock
-            var clock=new pygame.time.Clock()
+            let clock=new pygame.time.Clock()
 
             //text
-            var my_font=getFont(fontName,tipHeight)
-            var tip=my_font.render("ESC: exit  Space: start&jump  Enter: purge  S: shoot",true,white)
-            var coldDownTip=my_font.render("Colddown",true,black)
-            var rectTip=tip.get_rect()
-            var shootTip=my_font.render("Silver Bullets: ",true,white)
-            var rectShootTip=shootTip.get_rect()
+            let my_font=getFont(fontName,tipHeight)
+            let tip=my_font.render("ESC: exit  Space: start&jump  Enter: purge  S: shoot",true,white)
+            let coldDownTip=my_font.render("Colddown",true,black)
+            let rectTip=tip.get_rect()
+            let shootTip=my_font.render("Silver Bullets: ",true,white)
+            let rectShootTip=shootTip.get_rect()
 
             //ranger vars
-            var xRanger=100
-            var yRanger=0
-            var ayRanger=0
-            var startMoveRanger=false
-            var cShoot=3
+            let xRanger=100
+            let yRanger=0
+            let ayRanger=0
+            let startMoveRanger=false
+            let cShoot=3
 
             //way
-            var wayImg=new pygame.Surface([wWay,scrHeight])
+            let wayImg=new pygame.Surface([wWay,scrHeight])
             wayImg.fill(white)
-            var pWays=[]
-            for(var x=0;x<scrWidth;x+=wWay)
+            let pWays=[]
+            for(let x=0;x<scrWidth;x+=wWay)
                 pWays.push([x,scrHeight-hWay])
 
             //antman
-            var pAnts=[]
+            let pAnts=[]
 
             //shoot
-            var pShoot=[]
+            let pShoot=[]
 
             //coldDown
-            var coldDown=0
+            let coldDown=0
 
             //scope
-            var scope=0
+            let scope=0
 
             //debug
-            var lastChar=null
-            var isReadyToDebug=false
-            var debugMode=false
+            let lastChar=null
+            let isReadyToDebug=false
+            let debugMode=false
 
             //game end tip
-            var gameEndTip=""
-            var hitWallTips=["A Great Wall!","Ouch!","Bang!","What A Nasty Scar!","Watch Out!","No Way!","Hurt!"]
-            var antEatTips=["Eaten by Ant!","Full Stomache! --Ant","Nothing Left","Ants Are Celebrating","Who Bit Me!","Standing at the Bottom of the Food Chain"]
+            let gameEndTip=""
+            let hitWallTips=["A Great Wall!","Ouch!","Bang!","What A Nasty Scar!","Watch Out!","No Way!","Hurt!"]
+            let antEatTips=["Eaten by Ant!","Full Stomache! --Ant","Nothing Left","Ants Are Celebrating","Who Bit Me!","Standing at the Bottom of the Food Chain"]
 
             //game start tip
-            var gameStartTipImg=my_font.render("Space to Run!",true,white)
+            let gameStartTipImg=my_font.render("Space to Run!",true,white)
 
             //main loop
-            var realFrame=true
+            let realFrame=true
             ;(function main_loop(){
                 function sleep(){
                     clock.tick(fps,main_loop)
@@ -174,16 +174,16 @@ addEventListener("load",function(){
                         pWays.shift()
                 }
                 if(pWays[pWays.length-1][0]+wWay<scrWidth){
-                    var rand=random.random()
+                    let rand=random.random()
                     if(rand>rand1Fall){
-                        var thisWay=pWays[pWays.length-1]
+                        let thisWay=pWays[pWays.length-1]
                         pWays.push([pWays[pWays.length-1][0]+wWay,scrHeight+hRanger])
                         if(rand>rand2Fall)
                             pWays.push([pWays[pWays.length-1][0]+wWay,scrHeight+hRanger])
                         pWays.push([pWays[pWays.length-1][0]+wWay,thisWay[1]])
                     }
                     else{
-                        var choices=null
+                        let choices=null
                         if(pWays[pWays.length-1][1]>=scrHeight-hStepWay)choices=[0,-1]
                         else if(pWays[pWays.length-1][1]<=hStepWay+hRanger)choices=[0,1]
                         else choices=[-1,0,1]
@@ -196,15 +196,15 @@ addEventListener("load",function(){
                 }
 
                 //move ranger
-                var gameEnd=false
-                var onWays=[]
-                for(var i=0;i<pWays.length;++i){
-                    var pway=pWays[i]
+                let gameEnd=false
+                let onWays=[]
+                for(let i=0;i<pWays.length;++i){
+                    let pway=pWays[i]
                     if((xRanger>=pway[0]&&xRanger<=pway[0]+wWay)||(xRanger+wRanger>=pway[0]&&xRanger+wRanger<=pway[0]+wWay))
                         onWays.push(pway)
                     if(onWays.length==2)break
                 }
-                var maxhWay=-hRanger
+                let maxhWay=-hRanger
                 onWays.forEach(function(pway){
                     if(pway[1]<scrHeight-maxhWay)
                         maxhWay=scrHeight-pway[1]
@@ -223,20 +223,20 @@ addEventListener("load",function(){
                 }
 
                 //move shoot
-                for(var i=0;i<pShoot.length;++i){
-                    var psh=pShoot[i]
-                    var breakaway=false
-                    for(var i=0;i<pAnts.length;++i){
-                        var pant=pAnts[i]
-                        var x1=psh[0]
-                        var x2=pant[0]
-                        var y1=psh[1]
-                        var y2=pant[1]
-                        var w1=wShoot
-                        var w2=wAntman
-                        var h1=hShoot
-                        var h2=hAntman
-                        var ishitAnt=true
+                for(let i=0;i<pShoot.length;++i){
+                    let psh=pShoot[i]
+                    let breakaway=false
+                    for(let i=0;i<pAnts.length;++i){
+                        let pant=pAnts[i]
+                        let x1=psh[0]
+                        let x2=pant[0]
+                        let y1=psh[1]
+                        let y2=pant[1]
+                        let w1=wShoot
+                        let w2=wAntman
+                        let h1=hShoot
+                        let h2=hAntman
+                        let ishitAnt=true
                         if(x1>=x2&&x1>=x2+w2)ishitAnt=false
                         else if(x1<=x2&&x1+w1<=x2)ishitAnt=false
                         else if(y1>=y2&&y1>=y2+h2)ishitAnt=false
@@ -250,17 +250,17 @@ addEventListener("load",function(){
                         }
                     }
                     if(breakaway)continue
-                    for(var i=0;i<pWays.length;++i){
-                        var pway=pWays[i]
-                        var x1=psh[0]
-                        var x2=pway[0]
-                        var y1=psh[1]
-                        var y2=pway[1]
-                        var w1=wShoot
-                        var w2=wWay
-                        var h1=hShoot
-                        var h2=scrHeight
-                        var ishitWall=true
+                    for(let i=0;i<pWays.length;++i){
+                        let pway=pWays[i]
+                        let x1=psh[0]
+                        let x2=pway[0]
+                        let y1=psh[1]
+                        let y2=pway[1]
+                        let w1=wShoot
+                        let w2=wWay
+                        let h1=hShoot
+                        let h2=scrHeight
+                        let ishitWall=true
                         if(x1>=x2&&x1>=x2+w2)ishitWall=false
                         else if(x1<=x2&&x1+w1<=x2)ishitWall=false
                         else if(y1>=y2&&y1>=y2+h2)ishitWall=false
@@ -283,15 +283,15 @@ addEventListener("load",function(){
                         pant[2]=antMoveRate[1]
                     else if(pant[0]+wAntman>pant[3]+wWay)
                         pant[2]=antMoveRate[0]
-                    var x1=pant[0]
-                    var x2=xRanger
-                    var y1=pant[1]
-                    var y2=yRanger
-                    var w1=wAntman
-                    var w2=wRanger
-                    var h1=hAntman
-                    var h2=hRanger
-                    var isEat=true
+                    let x1=pant[0]
+                    let x2=xRanger
+                    let y1=pant[1]
+                    let y2=yRanger
+                    let w1=wAntman
+                    let w2=wRanger
+                    let h1=hAntman
+                    let h2=hRanger
+                    let isEat=true
                     if(x1>=x2&&x1>=x2+w2)isEat=false
                     else if(x1<=x2&&x1+w1<=x2)isEat=false
                     else if(y1>=y2&&y1>=y2+h2)isEat=false
@@ -303,7 +303,7 @@ addEventListener("load",function(){
                 })
 
                 //get event
-                var isReturn=false
+                let isReturn=false
                 pygame.event.get().forEach(function(e){
                     if(e.type==QUIT)sys.exit()
                     else if(e.type==KEYDOWN){
@@ -345,7 +345,7 @@ addEventListener("load",function(){
                 fakeScreen.blit(tip,[scrWidth-rectTip.right,0])
                 screen.blit(my_font.render("fps: "+parseInt(clock.get_fps())+" Score: "+scope,false,white),[0,0])
                 fakeScreen.blit(my_font.render("fps: "+parseInt(clock.get_fps())+" Score: "+scope,false,white),[0,0])
-                var coldDownImg=new pygame.Surface([parseInt(scrWidth/coldDownTimeout/30*coldDown),tipHeight])
+                let coldDownImg=new pygame.Surface([parseInt(scrWidth/coldDownTimeout/30*coldDown),tipHeight])
                 coldDownImg.fill(white)
                 screen.blit(coldDownImg,[0,tipHeight])
                 fakeScreen.blit(coldDownImg,[0,tipHeight])
@@ -353,7 +353,7 @@ addEventListener("load",function(){
                 fakeScreen.blit(coldDownTip,[0,tipHeight])
                 screen.blit(shootTip,[0,2*tipHeight])
                 fakeScreen.blit(shootTip,[0,2*tipHeight])
-                for(var i=0;i<cShoot;++i){
+                for(let i=0;i<cShoot;++i){
                     screen.blit(shootImg,[rectShootTip.right+i*(wShoot+4),2*tipHeight+Math.floor(tipHeight/2)-Math.floor(hShoot/2)])
                     fakeScreen.blit(shootImg,[rectShootTip.right+i*(wShoot+4),2*tipHeight+Math.floor(tipHeight/2)-Math.floor(hShoot/2)])
                 }
@@ -378,11 +378,11 @@ addEventListener("load",function(){
                 pygame.display.update()
 
                 //is game end?
-                var rewhile=true
+                let rewhile=true
                 if(gameEnd&&!debugMode){
-                    var textImg=getFont(fontName,gameOverHeight).render("GAME OVER",true,red)
-                    var tipImg=my_font.render(gameEndTip,true,red)
-                    var tip2Img=my_font.render("Press Space? Begin again.",true,white)
+                    let textImg=getFont(fontName,gameOverHeight).render("GAME OVER",true,red)
+                    let tipImg=my_font.render(gameEndTip,true,red)
+                    let tip2Img=my_font.render("Press Space? Begin again.",true,white)
                     screen.blit(textImg,[Math.floor(scrWidth/2)-Math.floor(textImg.get_rect().right/2),Math.floor(scrHeight/2)-Math.floor(textImg.get_rect().bottom/2)])
                     screen.blit(tipImg,[Math.floor(scrWidth/2)-Math.floor(tipImg.get_rect().right/2),Math.floor(scrHeight/2)+Math.floor(textImg.get_rect().bottom/2)])
                     screen.blit(tip2Img,[Math.floor(scrWidth/2)-Math.floor(tip2Img.get_rect().right/2),Math.floor(scrHeight/2)+Math.floor(textImg.get_rect().bottom/2)+tipImg.get_rect().bottom])
