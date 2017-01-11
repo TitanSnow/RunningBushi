@@ -6,9 +6,6 @@ var K_SPACE=1;
 var K_RETURN=2;
 var K_s=3;
 addEventListener("load",function(){
-	document.body.addEventListener("click",function(){
-		pygame.event.push({type:KEYDOWN,key:K_SPACE});
-	});
 	keyboard.bind("escape",function(){
 		pygame.event.push({type:KEYDOWN,key:K_ESCAPE});
 	});
@@ -19,6 +16,16 @@ addEventListener("load",function(){
 		pygame.event.push({type:KEYDOWN,key:K_RETURN});
 	});
 	keyboard.bind("s",function(){
+		pygame.event.push({type:KEYDOWN,key:K_s});
+	});
+	var mc=new Hammer(document.body);
+	mc.on("tap",function(){
+		pygame.event.push({type:KEYDOWN,key:K_SPACE});
+	});
+	mc.on("press",function(){
+		pygame.event.push({type:KEYDOWN,key:K_RETURN});
+	});
+	mc.on("swiperight",function(){
 		pygame.event.push({type:KEYDOWN,key:K_s});
 	});
 });
