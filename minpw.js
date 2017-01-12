@@ -29,7 +29,7 @@ var pygame={
 			rect.top=rect[1];
 			rect.right=rect[2];
 			rect.bottom=rect[3];
-			return ;
+			return rect;
 		}
 		this.Image=function(img){
 			that.Surface.call(this,[img.width,img.height]);
@@ -102,7 +102,11 @@ var pygame={
 			}
 		}
 		this.font.Font.prototype.render=function(text,msaa,color,bgcolor){
-			return new that.fontFakeSurface(this.name,this.size,text,msaa,color,bgcolor);
+			var ffs=new that.fontFakeSurface(this.name,this.size,text,msaa,color,bgcolor);
+			var rect=ffs.get_rect();
+			var rs=new that.Surface([rect.right,rect.bottom]);
+			ffs.drawText(rs,[0,0]);
+			return rs;
 		}
 		this.fontFakeSurface=function(name,size,text,msaa,color,bgcolor){
 			this.name=name;
