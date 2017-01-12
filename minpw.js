@@ -64,7 +64,17 @@ var pygame={
 				this.time_list=[];
 			}
 		}
+		this.time.Clock.prototype.tick60=function(callback){
+			var that2=this;
+			requestAnimationFrame(function(){
+				that2.lastCall=Date.now();
+				that2.time_list.push(that2.lastCall);
+				if(that2.time_list.length-10>0) that2.time_list.splice(0,that2.time_list.length-10);
+				callback();
+			});
+		}
 		this.time.Clock.prototype.tick=function(fps,callback){
+			if(fps==60) return this.tick60(callback);
 			var now=Date.now();
 			var delay;
 			if(this.lastCall==0){
