@@ -5,6 +5,7 @@ var K_ESCAPE=0;
 var K_SPACE=1;
 var K_RETURN=2;
 var K_s=3;
+var RESIZE=2;
 addEventListener("load",function(){
 	keyboard.bind("escape",function(e){
 		pygame.event.push({type:KEYDOWN,key:K_ESCAPE});
@@ -32,4 +33,9 @@ addEventListener("load",function(){
 	mc.on("swiperight",function(){
 		pygame.event.push({type:KEYDOWN,key:K_s});
 	});
+	function resize(){
+		pygame.event.push({type:RESIZE});
+	}
+	addEventListener("resize",resize);
+	resize();
 });

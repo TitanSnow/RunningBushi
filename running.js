@@ -336,6 +336,26 @@ addEventListener("load",function(){
                             }
                         }
                     }
+                    else if(e.type==RESIZE){
+                        let rect=screen.get_rect()
+                        pygame.display.resize([innerWidth,innerHeight])
+                        scrWidth=innerWidth
+                        scrHeight=innerHeight
+                        pWays.forEach(function(pway){
+                            pway[1]=Math.max(hRanger,pway[1]-rect.bottom+scrHeight)
+                        })
+                        yRanger=Math.max(0,yRanger-rect.bottom+scrHeight)
+                        pShoot.forEach(function(psh){
+                            psh[1]=Math.max(hRanger-hAntman,psh[1]-rect.bottom+scrHeight)
+                        })
+                        pAnts.forEach(function(pant){
+                            for(let i=0;i<pWays.length;++i)
+                                if(pant[3]==pWays[i][0]){
+                                    pant[1]=pWays[i][1]-hAntman;
+                                    return;
+                                }
+                        })
+                    }
                 })
                 if(isReturn) return
 
@@ -395,6 +415,8 @@ addEventListener("load",function(){
                                 if(e.key==K_ESCAPE)sys.exit()
                                 if(e.key==K_SPACE)
                                     rewhile=false
+                            }else{
+                                pygame.event.push(e)
                             }
                         })
                         if(!rewhile){

@@ -47,12 +47,20 @@ var pygame={
 				}
 			}
 		}
+		var screen;
 		this.display={
 			update:function(){},
 			set_mode:function(size){
 				var scr=new that.Surface(size);
 				document.body.appendChild(scr.canvas);
+				screen=scr;
 				return scr;
+			},
+			resize:function(size){
+				screen.canvas.width=size[0];
+				screen.canvas.height=size[1];
+				screen.width=size[0];
+				screen.height=size[1];
 			}
 		}
 		this.time={
@@ -98,7 +106,8 @@ var pygame={
 			arv/=this.time_list.length-1;
 			return 1000/arv;
 		}
-		this.event=[];
+		if(typeof(this.event)!="object")
+			this.event=[];
 		this.event.get=function(){
 			var es=[];
 			while(this.length)
@@ -150,7 +159,8 @@ var pygame={
 			rect.bottom=rect[3];
 			return rect;
 		}
-	}
+	},
+	event:[]
 }
 var random={
 	random:function(){
