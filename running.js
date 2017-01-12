@@ -95,7 +95,7 @@ addEventListener("load",function(){
 
             //text
             let my_font=getFont(fontName,tipHeight)
-            let tip=my_font.render("ESC: exit  Space: start&jump  Enter: purge  S: shoot",true,white)
+            let tip=my_font.render("",true,white)
             let coldDownTip=my_font.render("Colddown",true,black)
             let rectTip=tip.get_rect()
             let shootTip=my_font.render("Silver Bullets: ",true,white)
@@ -401,7 +401,7 @@ addEventListener("load",function(){
                 //is game end?
                 let rewhile=true
                 if(gameEnd&&!debugMode){
-                    let textImg=getFont(fontName,gameOverHeight).render("GAME OVER",true,red)
+                    let textImg=getFont(fontName,gameOverHeight).render("☠",true,red)
                     let tipImg=my_font.render(gameEndTip,true,red)
                     let tip2Img=my_font.render("Press Space? Begin again.",true,white)
                     screen.blit(textImg,[Math.floor(scrWidth/2)-Math.floor(textImg.get_rect().right/2),Math.floor(scrHeight/2)-Math.floor(textImg.get_rect().bottom/2)])
