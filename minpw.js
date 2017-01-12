@@ -15,13 +15,13 @@ var pygame={
 			if(suf instanceof that.fontFakeSurface)
 				suf.drawText(this,pos);
 			else if(suf instanceof that.Surface)
-				this.context.drawImage(suf.canvas,pos[0],pos[1]);
+				this.context.drawImage(suf.canvas,Math.round(pos[0]),Math.round(pos[1]));
 			else
-				this.context.drawImage(suf,pos[0],pos[1]);
+				this.context.drawImage(suf,Math.round(pos[0]),Math.round(pos[1]));
 		}
 		this.Surface.prototype.fill=function(color){
 			this.context.fillStyle="rgb("+color[0]+","+color[1]+","+color[2]+")";
-			this.context.fillRect(0,0,this.width,this.height);
+			this.context.fillRect(0,0,Math.round(this.width),Math.round(this.height));
 		}
 		this.Surface.prototype.get_rect=function(){
 			var rect=[0,0,this.width,this.height];
