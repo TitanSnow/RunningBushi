@@ -324,6 +324,7 @@ addEventListener("load",function(){
                                 coldDown=coldDownTimeout*30
                                 pygame.time.wait(1000,main_loop)
                                 isReturn=true
+                                realFrame=true
                             }
                         }
 
