@@ -346,7 +346,7 @@ addEventListener("load",function(){
                 fakeScreen.blit(tip,[scrWidth-rectTip.right,0])
                 screen.blit(my_font.render("fps: "+parseInt(clock.get_fps())+" Score: "+scope,false,white),[0,0])
                 fakeScreen.blit(my_font.render("fps: "+parseInt(clock.get_fps())+" Score: "+scope,false,white),[0,0])
-                let coldDownImg=new pygame.Surface([parseInt(scrWidth/coldDownTimeout/30*coldDown),tipHeight])
+                let coldDownImg=new pygame.Surface([Math.max(parseInt(scrWidth/coldDownTimeout/30*coldDown),1),tipHeight])
                 coldDownImg.fill(white)
                 screen.blit(coldDownImg,[0,tipHeight])
                 fakeScreen.blit(coldDownImg,[0,tipHeight])

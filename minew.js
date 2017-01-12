@@ -6,17 +6,21 @@ var K_SPACE=1;
 var K_RETURN=2;
 var K_s=3;
 addEventListener("load",function(){
-	keyboard.bind("escape",function(){
+	keyboard.bind("escape",function(e){
 		pygame.event.push({type:KEYDOWN,key:K_ESCAPE});
+		e.preventDefault();
 	});
-	keyboard.bind("space",function(){
+	keyboard.bind("space",function(e){
 		pygame.event.push({type:KEYDOWN,key:K_SPACE});
+		e.preventDefault();
 	});
-	keyboard.bind("enter",function(){
+	keyboard.bind("enter",function(e){
 		pygame.event.push({type:KEYDOWN,key:K_RETURN});
+		e.preventDefault();
 	});
-	keyboard.bind("s",function(){
+	keyboard.bind("s",function(e){
 		pygame.event.push({type:KEYDOWN,key:K_s});
+		e.preventDefault();
 	});
 	var mc=new Hammer(document.body);
 	mc.on("tap",function(){
