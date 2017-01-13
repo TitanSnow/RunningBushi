@@ -138,7 +138,7 @@ addEventListener("load",function(){
             let antEatTips=["Eaten by Ant!","Full Stomache! --Ant","Nothing Left","Ants Are Celebrating","Who Bit Me!","Standing at the Bottom of the Food Chain"]
 
             //game start tip
-            let gameStartTipImg=my_font.render("Space to Run!",true,white)
+            let gameStartTipImg=my_font.render("Tap to Run!",true,white)
 
             //main loop
             let realFrame=true
