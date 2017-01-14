@@ -95,7 +95,7 @@ addEventListener("load",function(){
 
             //text
             let my_font=getFont(fontName,tipHeight)
-            let tip=my_font.render("",true,white)
+            let tip=my_font.render("Tap, Press, Swipe!",true,white)
             let coldDownTip=my_font.render("Colddown",true,black)
             let rectTip=tip.get_rect()
             let shootTip=my_font.render("Silver Bullets: ",true,white)
