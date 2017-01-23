@@ -61,6 +61,14 @@ randAntman=0.05
 wShoot=8
 hShoot=8
 shootRate=16
+tipText="ESC: exit  Space: start&jump  Enter: purge  S: shoot"
+coldDownTipText="Colddown"
+shootTipText="Silver Bullets: "
+hitWallTips=("A Great Wall!","Ouch!","Bang!","What A Nasty Scar!","Watch Out!","No Way!","Hurt!")
+antEatTips=("Eaten by Ant!","Full Stomache! --Ant","Nothing Left","Ants Are Celebrating","Who Bit Me!","Standing at the Bottom of the Food Chain")
+gameStartTipText="Space to Run!"
+gameOverTipText="GAME OVER"
+tip2Text="Press Space? Begin again."
 
 #init
 pygame.init()
@@ -75,6 +83,8 @@ shootImg=pygame.image.load(shootImgFileName).convert_alpha()
 #functions
 def getFont(name,size):
     return pygame.font.Font(name,size)
+def getStatusTip(fps,score):
+    return "fps: "+str(fps)+" Score: "+str(score)
 
 while True:
     #get clock
@@ -82,10 +92,10 @@ while True:
 
     #text
     my_font=getFont(fontName,tipHeight)
-    tip=my_font.render("ESC: exit  Space: start&jump  Enter: purge  S: shoot",True,white)
-    coldDownTip=my_font.render("Colddown",True,black)
+    tip=my_font.render(tipText,True,white)
+    coldDownTip=my_font.render(coldDownTipText,True,black)
     rectTip=tip.get_rect()
-    shootTip=my_font.render("Silver Bullets: ",True,white)
+    shootTip=my_font.render(shootTipText,True,white)
     rectShootTip=shootTip.get_rect()
 
     #ranger vars
@@ -98,9 +108,7 @@ while True:
     #way
     wayImg=pygame.Surface((wWay,scrHeight))
     wayImg.fill(white)
-    pWays=[]
-    for x in range(0,scrWidth,wWay):
-        pWays.append([x,scrHeight-hWay])
+    pWays=[[x,scrHeight-hWay] for x in range(0,scrWidth,wWay)]
 
     #antman
     pAnts=[]
@@ -121,11 +129,9 @@ while True:
 
     #game end tip
     gameEndTip=""
-    hitWallTips=("A Great Wall!","Ouch!","Bang!","What A Nasty Scar!","Watch Out!","No Way!","Hurt!")
-    antEatTips=("Eaten by Ant!","Full Stomache! --Ant","Nothing Left","Ants Are Celebrating","Who Bit Me!","Standing at the Bottom of the Food Chain")
 
     #game start tip
-    gameStartTipImg=my_font.render("Space to Run!",True,white)
+    gameStartTipImg=my_font.render(gameStartTipText,True,white)
 
     #main loop
     realFrame=True
@@ -141,21 +147,21 @@ while True:
             continue
         else:
             realFrame=False
-        
+
         #change coldDown
         if coldDown>0:
             coldDown-=1
-        
+
         #change scope
         if startMoveRanger:
             scope+=1
-        
+
         #ways
         if startMoveRanger:
             for pway in pWays:
                 pway[0]+=wayRate
             if pWays[0][0]+wWay<0:
-                pWays=pWays[1:]
+                del pWays[0]
         if pWays[-1][0]+wWay<scrWidth:
             rand=random.random()
             if rand>rand1Fall:
@@ -173,12 +179,12 @@ while True:
                 if rand<randAntman:
                     #add antman
                     pAnts.append([pWays[-1][0]+random.randint(0,wWay-wRanger),pWays[-1][1]-hAntman,random.choice(antMoveRate),pWays[-1][0]+4])
-        
+
         #move ranger
         gameEnd=False
         onWays=[]
         for pway in pWays:
-            if (xRanger>=pway[0] and xRanger<=pway[0]+wWay) or (xRanger+wRanger>=pway[0] and xRanger+wRanger<=pway[0]+wWay):
+            if pway[0]+wWay>=xRanger>=pway[0] or pway[0]+wWay>=xRanger+wRanger>=pway[0]:
                 onWays.append(pway)
             if len(onWays)==2:break
         maxhWay=-hRanger
@@ -194,7 +200,7 @@ while True:
         elif startMoveRanger:
             ayRanger+=pDownRate
             yRanger+=ayRanger
-            
+
         #move shoot
         for psh in pShoot:
             breakaway=False
@@ -238,8 +244,8 @@ while True:
                     breakaway=True
                     break
             if breakaway:continue
-            psh[0]+=shootRate            
-        
+            psh[0]+=shootRate
+
         #move antman
         for pant in pAnts:
             pant[3]-=4
@@ -264,7 +270,7 @@ while True:
             if isEat:
                 gameEnd=True
                 gameEndTip=random.choice(antEatTips)
-        
+
         #get event
         for e in pygame.event.get():
             if e.type==QUIT:sys.exit()
@@ -283,7 +289,7 @@ while True:
                         pAnts=[]
                         pygame.time.wait(1000)
                         coldDown=coldDownTimeout*30
-                
+
                 #debug
                 elif e.key==K_d:
                     isReadyToDebug=True
@@ -310,20 +316,21 @@ while True:
                         isReadyToDebug=False
                 elif e.key==K_n:
                     debugMode=False
-                
+
                 #shoot
                 elif e.key==K_s:
                     if startMoveRanger and cShoot>0:
                         cShoot-=1
                         pShoot.append([xRanger+wRanger,yRanger+hRanger-hAntman])
-        
+
         #draw
         screen.fill(black)
         fakeScreen.fill(black)
         screen.blit(tip,(scrWidth-rectTip.right,0))
         fakeScreen.blit(tip,(scrWidth-rectTip.right,0))
-        screen.blit(my_font.render("fps: "+str(int(clock.get_fps()))+" Score: "+str(scope),False,white),(0,0))
-        fakeScreen.blit(my_font.render("fps: "+str(int(clock.get_fps()))+" Score: "+str(scope),False,white),(0,0))
+        statusTip=my_font.render(getStatusTip(int(clock.get_fps()),scope),False,white)
+        screen.blit(statusTip,(0,0))
+        fakeScreen.blit(statusTip,(0,0))
         coldDownImg=pygame.Surface((int(scrWidth/coldDownTimeout/30*coldDown),tipHeight))
         coldDownImg.fill(white)
         screen.blit(coldDownImg,(0,tipHeight))
@@ -332,7 +339,7 @@ while True:
         fakeScreen.blit(coldDownTip,(0,tipHeight))
         screen.blit(shootTip,(0,2*tipHeight))
         fakeScreen.blit(shootTip,(0,2*tipHeight))
-        for i in range(0,cShoot):
+        for i in range(cShoot):
             screen.blit(shootImg,(rectShootTip.right+i*(wShoot+4),2*tipHeight+tipHeight//2-hShoot//2))
             fakeScreen.blit(shootImg,(rectShootTip.right+i*(wShoot+4),2*tipHeight+tipHeight//2-hShoot//2))
         screen.blit(rangerImg,(xRanger,yRanger))
@@ -350,13 +357,13 @@ while True:
             screen.blit(gameStartTipImg,(scrWidth//2-gameStartTipImg.get_rect().right//2,scrHeight//2-gameStartTipImg.get_rect().bottom//2))
             fakeScreen.blit(gameStartTipImg,(scrWidth//2-gameStartTipImg.get_rect().right//2,scrHeight//2-gameStartTipImg.get_rect().bottom//2))
         pygame.display.update()
-        
+
         #is game end?
         rewhile=True
         if gameEnd and not debugMode:
-            textImg=getFont(fontName,gameOverHeight).render("GAME OVER",True,red)
+            textImg=getFont(fontName,gameOverHeight).render(gameOverTipText,True,red)
             tipImg=my_font.render(gameEndTip,True,red)
-            tip2Img=my_font.render("Press Space? Begin again.",True,white)
+            tip2Img=my_font.render(tip2Text,True,white)
             screen.blit(textImg,(scrWidth//2-textImg.get_rect().right//2,scrHeight//2-textImg.get_rect().bottom//2))
             screen.blit(tipImg,(scrWidth//2-tipImg.get_rect().right//2,scrHeight//2+textImg.get_rect().bottom//2))
             screen.blit(tip2Img,(scrWidth//2-tip2Img.get_rect().right//2,scrHeight//2+textImg.get_rect().bottom//2+tipImg.get_rect().bottom))
