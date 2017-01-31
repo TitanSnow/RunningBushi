@@ -288,30 +288,33 @@ while(True){
 			}
 		}
 
-		// #get event
-		// for e in pygame.event.get():
-			// if e.type==QUIT:sys.exit()
-			// elif e.type==KEYDOWN:
-				// if e.key==K_ESCAPE:sys.exit()
-				// elif e.key==K_SPACE:
-					// startMoveRanger=True
-					// if yRanger+hRanger==scrHeight-maxhWay:
-						// ayRanger=-12
-				// elif e.key==K_RETURN:
-					// if startMoveRanger and coldDown==0:
-						// screen.fill(red)
-						// pygame.display.update()
-						// for pway in pWays:
-							// pway[1]=scrHeight-hWay
-						// pAnts=[]
-						// pygame.time.wait(1000)
-						// coldDown=coldDownTimeout*30
-
-				// #shoot
-				// elif e.key==K_s:
-					// if startMoveRanger and cShoot>0:
-						// cShoot-=1
-						// pShoot.append([xRanger+wRanger,yRanger+hRanger-hAntman])
+		//get event
+		for(let e of pygame.event.get()){
+			if(e.type==KEYDOWN){
+				if(e.key==K_SPACE){
+					startMoveRanger=True
+					if(yRanger+hRanger==scrHeight-maxhWay)
+						ayRanger=-12
+				}
+				else if(e.key==K_RETURN){
+					if(startMoveRanger && coldDown==0)
+						screen.fill(red)
+						pygame.display.update()
+						for(let pway of pWays)
+							pway[1]=scrHeight-hWay
+						pAnts=[]
+						await pygame.time.wait(1000)
+						coldDown=coldDownTimeout*30
+				}
+				//shoot
+				else if(e.key==K_s){
+					if(startMoveRanger && cShoot>0){
+						cShoot-=1
+						pShoot.append([xRanger+wRanger,yRanger+hRanger-hAntman])
+					}
+				}
+			}
+		}
 
 		//draw
 		screen.fill(black)
@@ -365,12 +368,12 @@ while(True){
 			pygame.display.update()
 			while(True){
 				await pygame.time.wait(1000)
-				//for e in pygame.event.get():
-				//	if e.type==QUIT:sys.exit()
-				//	elif e.type==KEYDOWN:
-				//		if e.key==K_ESCAPE:sys.exit()
-				//		if e.key==K_SPACE:
-				//			rewhile=False
+				for(let e of pygame.event.get()){
+					if(e.type==KEYDOWN){
+						if(e.key==K_SPACE)
+							rewhile=False
+					}
+				}
 				if(!rewhile)break
 			}
 		}
