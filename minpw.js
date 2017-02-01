@@ -29,7 +29,12 @@
 		}
 	}
 	function wrapperConstructor(cls){
-		return new cls(Array.prototype.slice.call(arguments,1))
+		var len=arguments.length
+		var args=[]
+		var i
+		for(i=1;i<len;++i)
+			args.push(arguments[i])
+		return new cls(args)
 	}
 	var BaseException,Exception
 	;(function implementExceptions(){
@@ -188,142 +193,105 @@
 			}
 			class PygameError extends Exception{}
 			this.error=wrapperConstructor.bind(null,PygameError)
-			this.Color=function(){
-				var arr=Array.from(arguments)
-				Object.defineProperty(arr,"r",{
-					__proto__:null,
-					get:function(){
+			this.Color=function(r,g,b,a){
+				class Color extends outside.Array{
+					get r(){
 						return this[0]
-					},
-					set:function(x){
+					}
+					set r(x){
 						this[0]=x
 					}
-				})
-				Object.defineProperty(arr,"g",{
-					__proto__:null,
-					get:function(){
+					get g(){
 						return this[1]
-					},
-					set:function(x){
+					}
+					set g(x){
 						this[1]=x
 					}
-				})
-				Object.defineProperty(arr,"b",{
-					__proto__:null,
-					get:function(){
+					get b(){
 						return this[2]
-					},
-					set:function(x){
+					}
+					set b(x){
 						this[2]=x
 					}
-				})
-				Object.defineProperty(arr,"a",{
-					__proto__:null,
-					get:function(){
+					get a(){
 						if(this.length==4) return this[3]
 						else return 255
-					},
-					set:function(x){
+					}
+					set a(x){
 						this[3]=x
 					}
-				})
-				Object.defineProperty(arr,"a01",{
-					__proto__:null,
-					get:function(){
+					get a01(){
 						return this.a/255
-					},
-					set:function(x){
+					}
+					set a01(x){
 						this.a=Math.round(x*255)
 					}
-				})
+				}
+				var arr
+				if(arguments.length==4)
+					arr=new Color(r,g,b,a)
+				else
+					arr=new Color(r,g,b)
 				return arr
 			}
 			this.Rect=function(x,y,w,h){
-				var obj=[x,y,w,h]
-				Object.defineProperty(obj,"x",{
-					__proto__:null,
-					get:function(){
+				class Rect extends outside.Array{
+					get x(){
 						return this[0]
-					},
-					set:function(x){
+					}
+					set x(x){
 						this[0]=x
 					}
-				})
-				Object.defineProperty(obj,"y",{
-					__proto__:null,
-					get:function(){
+					get y(){
 						return this[1]
-					},
-					set:function(x){
+					}
+					set y(x){
 						this[1]=x
 					}
-				})
-				Object.defineProperty(obj,"w",{
-					__proto__:null,
-					get:function(){
+					get w(){
 						return this[2]
-					},
-					set:function(x){
+					}
+					set w(x){
 						this[2]=x
 					}
-				})
-				Object.defineProperty(obj,"h",{
-					__proto__:null,
-					get:function(){
+					get h(){
 						return this[3]
-					},
-					set:function(x){
+					}
+					set h(x){
 						this[3]=x
 					}
-				})
-				Object.defineProperty(obj,"width",{
-					__proto__:null,
-					get:function(){
+					get width(){
 						return this.w
-					},
-					set:function(x){
+					}
+					set width(x){
 						this.w=x
 					}
-				})
-				Object.defineProperty(obj,"height",{
-					__proto__:null,
-					get:function(){
+					get height(){
 						return this.h
-					},
-					set:function(x){
+					}
+					set height(x){
 						this.h=x
 					}
-				})
-				Object.defineProperty(obj,"left",{
-					__proto__:null,
-					get:function(){
+					get left(){
 						return this.x
-					},
-					set:function(x){
+					}
+					set left(x){
 						this.x=x
 					}
-				})
-				Object.defineProperty(obj,"top",{
-					__proto__:null,
-					get:function(){
+					get top(){
 						return this.y
-					},
-					set:function(x){
+					}
+					set top(x){
 						this.y=x
 					}
-				})
-				Object.defineProperty(obj,"right",{
-					__proto__:null,
-					get:function(){
+					get right(){
 						return this.x+this.w
 					}
-				})
-				Object.defineProperty(obj,"bottom",{
-					__proto__:null,
-					get:function(){
+					get bottom(){
 						return this.y+this.h
 					}
-				})
+				}
+				var obj=new Rect(x,y,w,h)
 				return obj
 			}
 			function blit3(suf,pos,area){
