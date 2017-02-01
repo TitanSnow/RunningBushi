@@ -358,7 +358,7 @@ while(True){
 
 		//is game end?
 		let rewhile=True
-		if(gameEnd){
+		if(gameEnd&&window.debugMode!==true){
 			let textImg=getFont(fontName,gameOverHeight).render(gameOverTipText,True,red)
 			let tipImg=my_font.render(gameEndTip,True,red)
 			let tip2Img=my_font.render(tip2Text,True,white)
