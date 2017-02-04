@@ -420,13 +420,14 @@
 						screen.fill([0,0,0])
 						return screen
 					}
-					this.flip=this.update=function(){
+					this.flip_fb=this.update_fb=function(){
 						var suf=this.get_surface()
 						var oco=suf.context.globalCompositeOperation
 						suf.context.globalCompositeOperation="destination-over"
 						suf.fill([0,0,0])
 						suf.context.globalCompositeOperation=oco
 					}
+					this.flip=this.update=function(){}
 					this.set_caption=function(st){
 						var ns=document.getElementsByTagName("title")
 						if(ns.length==0){
