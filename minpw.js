@@ -804,6 +804,17 @@
 				req.responseType="arraybuffer"
 				req.send()
 			}
+			this.performance=(function(){
+				var lastCall
+				return new class{
+					get fps(){
+						var newtm=Date.now()
+						var fps=1000/(newtm-lastCall)
+						lastCall=newtm
+						return fps
+					}
+				}
+			})()
 		}
 		init(){
 			var key

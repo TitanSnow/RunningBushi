@@ -140,6 +140,9 @@ while(True){
 		//sleep
 		await clock.tick(fps)
 
+		//get fps
+		let real_fps=pygame.performance.fps
+
 		if(!realFrame){
 			//draw fake frame
 			screen.blit(fakeScreen,[0,0])
@@ -321,7 +324,7 @@ while(True){
 		fakeScreen.fill(black)
 		screen.blit(tip,[scrWidth-rectTip.right,0])
 		fakeScreen.blit(tip,[scrWidth-rectTip.right,0])
-		let statusTip=my_font.render(getStatusTip(Math.floor(clock.get_fps()),scope),False,white)
+		let statusTip=my_font.render(getStatusTip(Math.floor(real_fps),scope),False,white)
 		screen.blit(statusTip,[0,0])
 		fakeScreen.blit(statusTip,[0,0])
 		let coldDownImg=pygame.Surface([Math.floor(scrWidth/coldDownTimeout/30*coldDown),tipHeight])
