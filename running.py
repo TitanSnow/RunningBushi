@@ -67,7 +67,7 @@ shootTipText="Silver Bullets: "
 hitWallTips=("A Great Wall!","Ouch!","Bang!","What A Nasty Scar!","Watch Out!","No Way!","Hurt!")
 antEatTips=("Eaten by Ant!","Full Stomache! --Ant","Nothing Left","Ants Are Celebrating","Who Bit Me!","Standing at the Bottom of the Food Chain")
 gameStartTipText="Space to Run!"
-gameOverTipText="GAME OVER"
+gameOverTipText="\u2620"
 tip2Text="Press Space? Begin again."
 
 #init
@@ -329,9 +329,20 @@ while True:
 
             #resize
             elif e.type==VIDEORESIZE:
+                rect=screen.get_rect()
                 scrWidth=e.w
                 scrHeight=e.h
                 createWindow()
+                for pway in pWays:
+                    pway[1]=max(hRanger,pway[1]-rect.bottom+scrHeight)
+                yRanger=max(0,yRanger-rect.bottom+scrHeight)
+                for psh in pShoot:
+                    psh[1]=max(hRanger-hAntman,psh[1]-rect.bottom+scrHeight)
+                for pant in pAnts:
+                    for pway in pWays:
+                        if pant[3]==pway[0]:
+                            pant[1]=pway[1]-hAntman
+                            break
 
         #draw
         screen.fill(black)
@@ -371,6 +382,9 @@ while True:
         #is game end?
         rewhile=True
         if gameEnd and not debugMode:
+            fakeScreen.blit(screen,(0,0))
+            screen=pygame.display.set_mode((scrWidth,scrHeight))
+            screen.blit(fakeScreen,(0,0))
             textImg=getFont(fontName,gameOverHeight).render(gameOverTipText,True,red)
             tipImg=my_font.render(gameEndTip,True,red)
             tip2Img=my_font.render(tip2Text,True,white)
@@ -387,5 +401,6 @@ while True:
                         if e.key==K_SPACE:
                             rewhile=False
                 if not rewhile:break
+            createWindow()
         if not rewhile:
             break
