@@ -72,8 +72,12 @@ tip2Text="Press Space? Begin again."
 
 #init
 pygame.init()
-screen=pygame.display.set_mode((scrWidth,scrHeight))
-fakeScreen=pygame.Surface((scrWidth,scrHeight))
+def createWindow():
+    global screen
+    screen=pygame.display.set_mode((scrWidth,scrHeight),RESIZABLE)
+    global fakeScreen
+    fakeScreen=pygame.Surface((scrWidth,scrHeight))
+createWindow()
 
 #import images
 rangerImg=pygame.image.load(rangerImgFileName).convert_alpha()
@@ -322,6 +326,12 @@ while True:
                     if startMoveRanger and cShoot>0:
                         cShoot-=1
                         pShoot.append([xRanger+wRanger,yRanger+hRanger-hAntman])
+
+            #resize
+            elif e.type==VIDEORESIZE:
+                scrWidth=e.w
+                scrHeight=e.h
+                createWindow()
 
         #draw
         screen.fill(black)
