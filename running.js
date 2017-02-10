@@ -64,13 +64,18 @@ var shootTipText="Silver Bullets: "
 var hitWallTips=["A Great Wall!","Ouch!","Bang!","What A Nasty Scar!","Watch Out!","No Way!","Hurt!"]
 var antEatTips=["Eaten by Ant!","Full Stomache! --Ant","Nothing Left","Ants Are Celebrating","Who Bit Me!","Standing at the Bottom of the Food Chain"]
 var gameStartTipText="Space to Run!"
-var gameOverTipText="GAME OVER"
+var gameOverTipText="\u2620"
 var tip2Text="Press Space? Begin again."
 
 //init
 pygame.init()
-var screen=pygame.display.set_mode([scrWidth,scrHeight])
-var fakeScreen=pygame.Surface([scrWidth,scrHeight])
+var screen
+var fakeScreen
+function createWindow(){
+	screen=pygame.display.set_mode([scrWidth,scrHeight])
+	fakeScreen=pygame.Surface([scrWidth,scrHeight])
+}
+createWindow()
 
 //import images
 var imgs=await Promise.all([
@@ -317,6 +322,24 @@ while(True){
 					}
 				}
 			}
+			//resize
+			else if(e.type==VIDEORESIZE){
+				let rect=screen.get_rect()
+				scrWidth=e.w
+				scrHeight=e.h
+				createWindow()
+				for(let pway of pWays)
+					pway[1]=Math.max(hRanger,pway[1]-rect.bottom+scrHeight)
+				yRanger=Math.max(0,yRanger-rect.bottom+scrHeight)
+				for(let psh of pShoot)
+					psh[1]=Math.max(hRanger-hAntman,psh[1]-rect.bottom+scrHeight)
+				for(let pant of pAnts)
+					for(let pway of pWays)
+						if(pant[3]==pway[0]){
+							pant[1]=pway[1]-hAntman
+							break
+						}
+			}
 		}
 
 		//draw
@@ -362,6 +385,9 @@ while(True){
 		//is game end?
 		let rewhile=True
 		if(gameEnd&&window.debugMode!==true){
+			fakeScreen.blit(screen,[0,0])
+			screen=pygame.display.set_mode([scrWidth,scrHeight])
+			screen.blit(fakeScreen,[0,0])
 			let textImg=getFont(fontName,gameOverHeight).render(gameOverTipText,True,red)
 			let tipImg=my_font.render(gameEndTip,True,red)
 			let tip2Img=my_font.render(tip2Text,True,white)
@@ -379,6 +405,7 @@ while(True){
 				}
 				if(!rewhile)break
 			}
+			createWindow()
 		}
 		if(!rewhile)
 			break

@@ -28,7 +28,11 @@
 	w.K_RETURN=1
 	w.K_s=2
 	w.KEYDOWN=0
+	w.VIDEORESIZE=1
 	key("space",function(e){e.preventDefault();pygame.event.append({type:KEYDOWN,key:K_SPACE})})
 	key("enter",function(e){e.preventDefault();pygame.event.append({type:KEYDOWN,key:K_RETURN})})
 	key("s",function(e){e.preventDefault();pygame.event.append({type:KEYDOWN,key:K_s})})
+	w.onresize=function(){
+		pygame.event.append({type:VIDEORESIZE,w:innerWidth,h:innerHeight})
+	}
 })(window)
